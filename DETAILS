@@ -11,11 +11,6 @@ patterns, directory hierarchies, and paradigms. Aster should not be used as a
 daily driver, instead as a fun experiment to see what computing can be like in a
 non-POSIX/non-MS environment.
 
-To compile the operating system, run the <build.sh> script in the <etc>
-directory. A disk image will be produced that can be used via all the normal
-manners of installing an operating system to hardware or a VM. If it doesn't
-compile on your system, open a ticket upstream in the code repository.
-
 --------------------------------------------------------------------------------
 
 LINKS
