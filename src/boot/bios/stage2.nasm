@@ -4,4 +4,4 @@ bits 16
 cli
 hlt
 
-times 512 - ($ - $$) db 0
+times 0x400 - ($ - $$) db 0
