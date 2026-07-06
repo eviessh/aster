@@ -127,7 +127,7 @@ fonts='boot'
 for font in $fonts; do
     ./etc/resources/font.sh $font || exit 1
     echo "./etc/resources/font.sh $font"
-    cat "bld/resources/fonts/$font.bin" >> 'bld/aster.img'
+    cat "bld/fonts/$font.bin" >> 'bld/aster.img'
 done
 
 if [ "$run" = "off" ]; then
@@ -161,13 +161,10 @@ elif [ "$run" = "bochs" ]; then
     fi
 
     mkdir -p 'bld/bochs' || exit 1
-    cp 'etc/debugger/bochsrc' 'bld/.bochsrc' || exit 1
-    cd 'bld' || exit 1
 
     if ! [ -e 'bld/bochs/monitor.bin' ]; then
-        printf 'Missing monitor EDID file, automatically retrieve? (y/N)' >&2
+        printf 'Missing monitor EDID file, automatically retrieve? (y/N) ' >&2
         read -r exportEDID
-        printf '%s\n' "$exportEDID"
 
         case "$exportEDID" in
             y)
@@ -175,7 +172,7 @@ elif [ "$run" = "bochs" ]; then
                 case "$(uname -s)" in
                     Linux)
                         printf 'linux.\n'
-                        source 'etc/edid/linux.sh'
+                        ./etc/edid/linux.sh
                         ;;
                     *)
                         printf 'unknown.\n'
@@ -190,6 +187,9 @@ elif [ "$run" = "bochs" ]; then
                 ;;
         esac
     fi
+
+    cp 'etc/debugging/bochsrc' 'bld/.bochsrc' || exit 1
+    cd 'bld' || exit 1
 
     bochs -debugger -q || exit 1
 else

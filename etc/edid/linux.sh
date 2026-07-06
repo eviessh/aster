@@ -49,7 +49,6 @@ usedOutput=
 if [ "$optionsAvailable" -eq '1' ]; then
     printf 'Select the output index to use: ' >&2
     read -r edidSelection
-    printf '%s\n' "$edidSelection"
 
     if ! [ "$edidSelection" -eq "$edidSelection" ]; then
         printf 'Selection provided is not a number.\n'
@@ -62,7 +61,7 @@ if [ "$optionsAvailable" -eq '1' ]; then
             usedOutput="$edidSource"
             break
         fi
-        atIndex+=1
+        atIndex=$((atIndex + 1))
     done
 
     if [ -z "$usedOutput" ]; then
