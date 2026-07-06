@@ -123,6 +123,13 @@ for file in $nasm_sources; do
     cat "bld/$file.bin" >> 'bld/aster.img'
 done
 
+fonts='boot'
+for font in $fonts; do
+    ./etc/resources/font.sh $font || exit 1
+    echo "./etc/resources/font.sh $font"
+    cat "bld/resources/fonts/$font.bin" >> 'bld/aster.img'
+done
+
 if [ "$run" = "off" ]; then
     exit 0
 fi
@@ -145,7 +152,7 @@ if [ "$run" = "qemu" ]; then
     fi
 
     (trap 'kill 0' SIGINT; qemu-system-x86_64 -drive file=bld/aster.img,format=raw -s -S -full-screen || exit 255 & )
-    gdb -x 'etc/gdbsetup.gdb'
+    gdb -x 'etc/debugging/gdbsetup.gdb'
     wait
 elif [ "$run" = "bochs" ]; then
     if ! command -v bochs 1>/dev/null 2>&1; then
@@ -154,8 +161,36 @@ elif [ "$run" = "bochs" ]; then
     fi
 
     mkdir -p 'bld/bochs' || exit 1
-    cp 'etc/.bochsrc' 'bld/.bochsrc' || exit 1
+    cp 'etc/debugger/bochsrc' 'bld/.bochsrc' || exit 1
     cd 'bld' || exit 1
+
+    if ! [ -e 'bld/bochs/monitor.bin' ]; then
+        printf 'Missing monitor EDID file, automatically retrieve? (y/N)' >&2
+        read -r exportEDID
+        printf '%s\n' "$exportEDID"
+
+        case "$exportEDID" in
+            y)
+                printf 'Exporting EDID from your platform...'
+                case "$(uname -s)" in
+                    Linux)
+                        printf 'linux.\n'
+                        source 'etc/edid/linux.sh'
+                        ;;
+                    *)
+                        printf 'unknown.\n'
+                        printf 'There is currently no automatic EDID script for your system.\n'
+                        exit 1
+                        ;;
+                esac
+                ;;
+            *)
+                printf 'Okay. Please import your EDID as "bld/bochs/monitor.bin".\n'
+                exit 0
+                ;;
+        esac
+    fi
+
     bochs -debugger -q || exit 1
 else
     echo "Unknown virtualizer."

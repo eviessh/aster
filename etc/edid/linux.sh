@@ -28,6 +28,7 @@
 connectedOutputs=
 optionsAvailable=0
 
+# Partial credit for this part goes to <https://askubuntu.com/a/1552762>.
 for edidSource in /sys/class/drm/*/edid; do
     statusFile="${edidSource%/edid}/status"
     if [ -f "$statusFile" ] && grep -qx 'connected' "$statusFile"; then
