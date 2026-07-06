@@ -103,6 +103,31 @@ boot_loadSecondStage:
         mov cl, 0x02
 
         int 0x13
+        jnc boot_loadBootFont
+
+        cmp si, 0x03
+        je boot_abort.diskReadFail
+        inc si
+        jmp .resetDisks
+
+boot_loadBootFont:
+    xor si, si
+    ; Load the boot font directly after the EDID record. The boot font is 760
+    ; bytes long.
+    mov bx, 0x0780
+
+    .resetDisks:
+        xor ah, ah
+        int 0x13
+        ; If we fail to reset, just keep trying.
+        jc .resetDisks
+    .readDisks:
+        mov ah, 0x02
+        ; Pull the two sectors directly after the second-stage bootloader.
+        mov al, 0x02
+        mov cl, 0x03
+
+        int 0x13
         jnc boot_getPreferredVideoMode
 
         cmp si, 0x03
@@ -131,7 +156,9 @@ boot_getPreferredVideoMode:
 
 ; Data setup to enable the preferred video mode.
 mov si, word [0x0500 + vbe_info_t.supportedModes]
-mov di, 0x0780
+; This will load all the VBE information blocks available into memory right
+; after the bootloader.
+mov di, 0x7F00
 
 ;-------------------------------------------------------------------------------
 ; Enable the preferred video mode by looping through all the BIOS-provided ones
@@ -157,17 +184,17 @@ boot_enablePreferredVideoMode:
     jnz boot_abort.getVGAModeFail
 
     ; We only need the first half of the attributes.
-    mov al, byte [0x0780 + vbe_mode_t.attributes]
+    mov al, byte [0x7F00 + vbe_mode_t.attributes]
     and al, 0b10011011
     cmp al, 0b10011011
     jne .nextMode
 
-    cmp bx, word [0x0780 + vbe_mode_t.width]
+    cmp bx, word [0x7F00 + vbe_mode_t.width]
     jne .nextMode
-    cmp dx, word [0x0780 + vbe_mode_t.height]
+    cmp dx, word [0x7F00 + vbe_mode_t.height]
     jne .nextMode
 
-    cmp byte [0x0780 + vbe_mode_t.bitsPerPixel], 0x20
+    cmp byte [0x7F00 + vbe_mode_t.bitsPerPixel], 0x20
     je .setMode
     .nextMode:
         add si, 0x02
