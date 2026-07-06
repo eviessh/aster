@@ -1,0 +1,28 @@
+--------------------------------------------------------------------------------
+
+ASTER
+
+Aster is a non-POSIX research operating system written in NASM assembly and a
+specialized domain-specific language named after the operating system itself.
+That language's compiler is built into the kernel itself, and IDE-type tools
+available to make the programming experience better. Aster is meant to be a
+tightly-knit environment, and so all applications share similar interface
+patterns, directory hierarchies, and paradigms. Aster should not be used as a
+daily driver, instead as a fun experiment to see what computing can be like in a
+non-POSIX/non-MS environment.
+
+To compile the operating system, run the <build.sh> script in the <etc>
+directory. A disk image will be produced that can be used via all the normal
+manners of installing an operating system to hardware or a VM. If it doesn't
+compile on your system, open a ticket upstream in the code repository.
+
+--------------------------------------------------------------------------------
+
+LINKS
+
+- Upstream <https://codeberg.org/eviessh/aster>
+    This is where the project is located on the web. No other code repository is
+    official or should be trusted. All tickets, issues, or queries should be
+    directed there.
+
+--------------------------------------------------------------------------------

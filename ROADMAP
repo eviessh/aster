@@ -1,0 +1,21 @@
+--------------------------------------------------------------------------------
+
+ROADMAP
+
+[ ] v1.0.0
+    - [ ] 07-05-26 <BOOTLOADER> <DOCUMENTATION>
+      Document the positions of bootloader-collected information (SVGA block,
+      bootdisk number, etc.).
+    - [ ] 07-05-26 <BOOTLOADER> <FEATURE>
+      Support EDID extension blocks in some capacity. We probably don't need
+      EVERY extension, but at least a couple would be nice.
+    - [ ] 07-05-26 <BOOTLOADER> <FEATURE>
+      Support non-32bpp video modes. This will require some serious work, but
+      also allow a lot more lower-end displays to work.
+    - [ ] 07-05-26 <BOOTLOADER> <FEATURE>
+      Support DisplayID. Seems like the Vulkan of monitor identification
+      formats.
+    - [ ] 07-05-26 <GENERAL> <DOCUMENTATION>
+      Formalize a documentation format for Aster (maybe groff inspired?).
+
+--------------------------------------------------------------------------------

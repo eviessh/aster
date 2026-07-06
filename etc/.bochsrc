@@ -1,0 +1,10 @@
+display_library: sdl2
+floppya: 1_44=./aster.img, status=inserted
+boot: floppy
+log: ./bochs/normal.log
+debugger: log=./bochs/debugger.log, gui=true
+clock: sync=realtime, time0=local
+magic_break: enabled=1
+vga: extension=vbe, ddc=file:./bochs/monitor.bin
+vgaromimage: file=$BXSHARE/VGABIOS-lgpl-latest-debug.bin
+memory: guest=2048, host=2048
