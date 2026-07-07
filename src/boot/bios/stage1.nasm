@@ -37,9 +37,9 @@ bits 16
 ;       used as any sort of data export.
 ;-------------------------------------------------------------------------------
 
-%include "src/boot/bios/types/vbeInfo.nasm"
-%include "src/boot/bios/types/vbeMode.nasm"
-%include "src/boot/bios/types/edid.nasm"
+%include "src/boot/bios/types/vbeInfo.inc"
+%include "src/boot/bios/types/vbeMode.inc"
+%include "src/boot/bios/types/edid.inc"
 
 %define VBE_INFO_LOCATION 0x0500
 %define VBE_EDID_LOCATION 0x0700
