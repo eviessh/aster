@@ -88,9 +88,9 @@ boot_loadSecondary:
         mov cl, 0x02
         int 0x13
         jnc boot_getMemoryMap
-        cmp si, 0x03
+        cmp di, 0x03
         je boot_abort.diskReadFail
-        inc si
+        inc di
         jmp .resetDisk
 
 boot_getMemoryMap:
@@ -129,21 +129,88 @@ boot_getGraphicsInfo:
         jne boot_abort.vbeUnsupported
         test ah, ah
         jnz boot_abort.getVBEInfoFail
+    .getEDIDInfo:
+        mov ax, 0x4F15
+        inc bl
+        mov di, 0x0700
+        int 0x10
+        cmp al, 0x4F
+        jne boot_abort.edidUnsupported
+        test ah, ah
+        jnz boot_abort.getEDIDFail
+    .getEDIDModeInfo:
+        mov bl, byte [0x0700 + vbe_edid_t.preferredHorizontalActivePixels]
+        mov bh, byte [0x0700 + vbe_edid_t.preferredHorizontalPixels2]
+        shr bh, 0x04
 
-cli
-hlt
+        ; Y resolution (in pixels)
+        mov dl, byte [0x0700 + vbe_edid_t.preferredVerticalActiveLines]
+        mov dh, byte [0x0700 + vbe_edid_t.preferredVerticalLines2]
+        shr dh, 0x04
+    mov si, [0x0500 + vbe_info_t.supportedModes]
+    mov di, 0x8200
+    .retrieveModeInfos:
+        mov ax, 0x4F01
+        mov cx, [ds:si]
+        cmp cx, 0xFFFF
+        je .endSearch
+        int 0x10
+        
+        ; We just assume this function is supported because it's guaranteed by
+        ; the VBE standard and we've already confirmed that getInfo exists.
+        test ah, ah
+        jnz boot_abort.getVBEModeFail
+
+        test bx, bx
+        jne .checkMode
+        .nextMode:
+            add si, 0x02
+            jmp .retrieveModeInfos
+        .checkMode:
+            ; We only need the first half of the attributes.
+            mov al, byte [0x8200 + vbe_mode_t.attributes]
+            and al, 0b10011011
+            cmp al, 0b10011011
+            jne .nextMode
+
+            cmp bx, word [0x8200 + vbe_mode_t.width]
+            jne .nextMode
+            cmp dx, word [0x8200 + vbe_mode_t.height]
+            jne .nextMode
+
+            cmp byte [0x8200 + vbe_mode_t.bitsPerPixel], 0x20
+            jne .nextMode
+        .setMode:
+            mov ax, 0x4F02
+            mov bx, cx
+            int 0x10
+
+            test ah, ah
+            jnz boot_abort.setVBEModeFail
+
+            jmp .nextMode
+        .endSearch:
+            test bx, bx
+            jnz boot_abort.noVBEModeFound
+
+boot_nextStage:
+    jmp 0x7E00
 
 %include "src/boot/bios/abort.nasm"
 
 boot_strings:
     ; Early-boot abort strings.
     .characterTable:    db "0123456789ABCDEF"
-    .getVBEInfoFail:    db "10/4F00", 0
-    .getVBEModeFail:    db "10/4F01", 0
-    .diskReadFail:      db "13/0002", 0
-    .memoryMapReadFail: db "15/E820", 0
-    .getEDIDFail:       db "10/4F15", 0
-    .noVBEModeFound:    db "NO MODE", 0
+    .failMessage:       db "ERROR WITH ",  0
+    .getVBEInfoFail:    db "10/4F00",      0
+    .getVBEModeFail:    db "10/4F01",      0
+    .setVBEModeFail:    db "10/4F02",      0
+    .diskReadFail:      db "13/0002",      0
+    .memoryMapReadFail: db "15/E820",      0
+    .getEDIDFail:       db "10/4F15",      0
+    .noVBE:             db "NO VBE HERE",  0
+    .noEDID:            db "NO EDID HERE", 0
+    .noVBEModeFound:    db "NO GMODE",     0
     
 times 0x1FE - ($ - $$) db 0
 dw 0xAA55

@@ -17,6 +17,10 @@ boot_abort:
         mov si, boot_strings.getVBEModeFail
         mov cl, ah
         jmp boot__printErrorCode
+    .setVBEModeFail:
+        mov si, boot_strings.setVBEModeFail
+        mov cl, ah
+        jmp boot__printErrorCode
     .getEDIDFail:
         mov si, boot_strings.getEDIDFail
         mov cl, ah
@@ -30,13 +34,13 @@ boot_abort:
         mov cl, ah
         jmp boot__printErrorCode
     .vbeUnsupported:
-        mov si, boot_strings.getVBEInfoFail
+        mov si, boot_strings.noVBE
         jmp boot__printErrorCode
     .noVBEModeFound:
         mov si, boot_strings.noVBEModeFound
         jmp boot__printErrorCode
     .edidUnsupported:
-        mov si, boot_strings.getEDIDFail
+        mov si, boot_strings.noEDID
 
 ;-------------------------------------------------------------------------------
 ; Print the error code associated with an abort event, including the contents of
@@ -47,8 +51,19 @@ boot_abort:
 ; <https://codeberg.org/eviessh/tinyboot>
 ;-------------------------------------------------------------------------------
 boot__printErrorCode:
+    push si
+    mov si, boot_strings.failMessage
+
     xor bx, bx
     mov ah, 0x0E
+    .loop:
+        lodsb
+        test al, al
+        jz .doneInitial
+        int 0x10
+        jmp .loop
+    .doneInitial:
+        pop si
     .string:
         lodsb
         test al, al
