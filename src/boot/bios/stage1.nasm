@@ -41,13 +41,7 @@ bits 16
 %include "inc/boot/bios/types/vbeMode.inc"
 %include "inc/boot/bios/types/edid.inc"
 
-%define VBE_INFO_LOCATION 0x0500
-%define VBE_EDID_LOCATION 0x0700
-%define VBE_MODE_LOCATION 0x0780
-%define INI_DISK_LOCATION 0x7BFF
-%define MEM_INFO_LOCATION 0x8200
-
-%define SECONDARY_SECTORS_LOCATION 0x7E00
+%include "inc/boot/bios/locations.inc"
 
 boot_launch:
     ; Some BIOSes spit us out at 0x7C00:0x0000, and others spit us out at
