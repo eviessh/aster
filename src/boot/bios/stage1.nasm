@@ -10,7 +10,7 @@ bits 16
 ;       If the BIOS does not support VBE2.0, an error will be thrown on load.
 ;   0x00000700 [0x0080]: The monitor's EDID record.
 ;       This contains the VBE/DDC2 information structure as reported by the
-;       BIOS. This is mostly used by the bootloader to get the preferred video
+;       BIOS. This is mostly used by the bootloader to get the p video
 ;       mode. 
 ;   0x00000780 [0x747F]: The list of VBE mode information.
 ;       This contains the list of VBE2.0+ mode information structures, truncated
@@ -41,6 +41,14 @@ bits 16
 %include "src/boot/bios/types/vbeMode.nasm"
 %include "src/boot/bios/types/edid.nasm"
 
+%define VBE_INFO_LOCATION 0x0500
+%define VBE_EDID_LOCATION 0x0700
+%define VBE_MODE_LOCATION 0x0780
+%define INI_DISK_LOCATION 0x7BFF
+%define MEM_INFO_LOCATION 0x8200
+
+%define SECONDARY_SECTORS_LOCATION 0x7E00
+
 boot_launch:
     ; Some BIOSes spit us out at 0x7C00:0x0000, and others spit us out at
     ; 0x0000:0x7C00. Make sure it's the second one, because it's way easier to
@@ -49,7 +57,7 @@ boot_launch:
         xor ax, ax
         mov ds, ax
         ; Save the boot disk.
-        mov [ds:0x7BFF], dl
+        mov [ds:INI_DISK_LOCATION], dl
         jmp 0x0000:boot_launch.clearEnvironment
     .clearEnvironment:
         clc
@@ -84,7 +92,7 @@ boot_loadSecondary:
         mov ah, 0x02
         mov al, 0x02
         ; Load the secondary sectors after this one.
-        mov bx, 0x7E00
+        mov bx, SECONDARY_SECTORS_LOCATION
         mov cl, 0x02
         int 0x13
         jnc boot_getMemoryMap
@@ -100,7 +108,7 @@ boot_getMemoryMap:
     xor ebx, ebx
     mov ecx, 0x00000014
     mov edx, 0x534D4150
-    mov di, 0x8200
+    mov di, MEM_INFO_LOCATION
     .readEntry:
         int 0x15
         jc boot_abort.memoryMapReadFail
@@ -120,10 +128,10 @@ boot_getMemoryMap:
 
 boot_getGraphicsInfo:
     ; We need this signature to get VBE 2.0 information.
-    mov dword [ds:0x0500], "VBE2"
+    mov dword [ds:VBE_INFO_LOCATION], "VBE2"
     .getVBEInfo:
         mov ax, 0x4F00
-        mov di, 0x0500
+        mov di, VBE_INFO_LOCATION
         int 0x10
         cmp al, 0x4F
         jne boot_abort.vbeUnsupported
@@ -132,23 +140,23 @@ boot_getGraphicsInfo:
     .getEDIDInfo:
         mov ax, 0x4F15
         inc bl
-        mov di, 0x0700
+        mov di, VBE_EDID_LOCATION
         int 0x10
         cmp al, 0x4F
         jne boot_abort.edidUnsupported
         test ah, ah
         jnz boot_abort.getEDIDFail
     .getEDIDModeInfo:
-        mov bl, byte [0x0700 + vbe_edid_t.preferredHorizontalActivePixels]
-        mov bh, byte [0x0700 + vbe_edid_t.preferredHorizontalPixels2]
+        mov bl, byte [VBE_EDID_LOCATION + vbe_edid_t.pHorizontalActivePixels]
+        mov bh, byte [VBE_EDID_LOCATION + vbe_edid_t.pHorizontalPixels2]
         shr bh, 0x04
 
         ; Y resolution (in pixels)
-        mov dl, byte [0x0700 + vbe_edid_t.preferredVerticalActiveLines]
-        mov dh, byte [0x0700 + vbe_edid_t.preferredVerticalLines2]
+        mov dl, byte [VBE_EDID_LOCATION + vbe_edid_t.pVerticalActiveLines]
+        mov dh, byte [VBE_EDID_LOCATION + vbe_edid_t.pVerticalLines2]
         shr dh, 0x04
-    mov si, [0x0500 + vbe_info_t.supportedModes]
-    mov di, 0x8200
+    mov si, [VBE_INFO_LOCATION + vbe_info_t.supportedModes]
+    mov di, VBE_MODE_LOCATION
     .retrieveModeInfos:
         mov ax, 0x4F01
         mov cx, [ds:si]
@@ -165,20 +173,23 @@ boot_getGraphicsInfo:
         jne .checkMode
         .nextMode:
             add si, 0x02
+            ; There's only ~128 bytes of useful information in the VBE2.0 mode
+            ; information structure.
+            add di, 0x080
             jmp .retrieveModeInfos
         .checkMode:
             ; We only need the first half of the attributes.
-            mov al, byte [0x8200 + vbe_mode_t.attributes]
+            mov al, byte [VBE_MODE_LOCATION + vbe_mode_t.attributes]
             and al, 0b10011011
             cmp al, 0b10011011
             jne .nextMode
 
-            cmp bx, word [0x8200 + vbe_mode_t.width]
+            cmp bx, word [VBE_MODE_LOCATION + vbe_mode_t.width]
             jne .nextMode
-            cmp dx, word [0x8200 + vbe_mode_t.height]
+            cmp dx, word [VBE_MODE_LOCATION + vbe_mode_t.height]
             jne .nextMode
 
-            cmp byte [0x8200 + vbe_mode_t.bitsPerPixel], 0x20
+            cmp byte [VBE_MODE_LOCATION + vbe_mode_t.bitsPerPixel], 0x20
             jne .nextMode
         .setMode:
             mov ax, 0x4F02
@@ -194,23 +205,120 @@ boot_getGraphicsInfo:
             jnz boot_abort.noVBEModeFound
 
 boot_nextStage:
-    jmp 0x7E00
+    jmp SECONDARY_SECTORS_LOCATION
 
-%include "src/boot/bios/abort.nasm"
+;-------------------------------------------------------------------------------
+; Abort the boot process because of a fatal error. This is meant to not be
+; jumped to explicitly, but rather one of its sublabels for the purpose of
+; adding useful error context.
+;
+; Copyright (c) 2026 Evelyn (eviessh), Tinyboot
+; <https://codeberg.org/eviessh/tinyboot>
+;-------------------------------------------------------------------------------
+boot_abort:
+    .getVBEInfoFail:
+        mov si, boot_strings.getVBEInfoFail
+        mov cl, ah
+        jmp boot__printErrorCode
+    .getVBEModeFail:
+        mov si, boot_strings.getVBEModeFail
+        mov cl, ah
+        jmp boot__printErrorCode
+    .setVBEModeFail:
+        mov si, boot_strings.setVBEModeFail
+        mov cl, ah
+        jmp boot__printErrorCode
+    .getEDIDFail:
+        mov si, boot_strings.getEDIDFail
+        mov cl, ah
+        jmp boot__printErrorCode
+    .diskReadFail:
+        mov si, boot_strings.diskReadFail
+        mov cl, ah
+        jmp boot__printErrorCode
+    .memoryMapReadFail:
+        mov si, boot_strings.memoryMapReadFail
+        mov cl, ah
+        jmp boot__printErrorCode
+    .vbeUnsupported:
+        mov si, boot_strings.noVBE
+        jmp boot__printErrorCode
+    .noVBEModeFound:
+        mov si, boot_strings.noVBEModeFound
+        jmp boot__printErrorCode
+    .edidUnsupported:
+        mov si, boot_strings.noEDID
+
+;-------------------------------------------------------------------------------
+; Print the error code associated with an abort event, including the contents of
+; the CL register as an error code. CL is printed regardless of if it's garbage
+; or not.
+;
+; Copyright (c) 2026 Evelyn (eviessh), Tinyboot
+; <https://codeberg.org/eviessh/tinyboot>
+;-------------------------------------------------------------------------------
+boot__printErrorCode:
+    push si
+    mov si, boot_strings.failMessage
+
+    xor bx, bx
+    mov ah, 0x0E
+    .loop:
+        lodsb
+        test al, al
+        jz .doneInitial
+        int 0x10
+        jmp .loop
+    .doneInitial:
+        pop si
+    .string:
+        lodsb
+        test al, al
+        jz .done
+        int 0x10
+        jmp .string
+    .done:
+
+    mov al, 'c'
+    int 0x10
+
+    ; Split the nibbles for our indexing use.
+    mov ch, cl
+    shr ch, 0x04
+    and cl, 0x0F
+
+    ; Look up the characters in the bin-to-hex mapping.
+    mov ax, cx
+    mov bx, boot_strings.characterTable
+    xlat
+    ; Swap around the nibbles so we can look up the next one.
+    xchg ah, al
+    xlat
+    ; Move AH back to CL so we can use it for interrupt stuff.
+    mov cl, ah
+
+    xor bx, bx
+    mov ah, 0x0E
+    int 0x10
+    mov al, cl
+    int 0x10
+    
+    cli
+    hlt
 
 boot_strings:
     ; Early-boot abort strings.
     .characterTable:    db "0123456789ABCDEF"
-    .failMessage:       db "ERROR WITH ",  0
-    .getVBEInfoFail:    db "10/4F00",      0
-    .getVBEModeFail:    db "10/4F01",      0
-    .setVBEModeFail:    db "10/4F02",      0
-    .diskReadFail:      db "13/0002",      0
-    .memoryMapReadFail: db "15/E820",      0
-    .getEDIDFail:       db "10/4F15",      0
-    .noVBE:             db "NO VBE HERE",  0
-    .noEDID:            db "NO EDID HERE", 0
-    .noVBEModeFound:    db "NO GMODE",     0
+    .failMessage:       db "ERROR GOTTEN ", 0
+    .getVBEInfoFail:    db "10/4F00",       0
+    .getVBEModeFail:    db "10/4F01",       0
+    .setVBEModeFail:    db "10/4F02",       0
+    .diskReadFail:      db "13/0002",       0
+    .memoryMapReadFail: db "15/E820",       0
+    .getEDIDFail:       db "10/4F15",       0
+    .noVBE:             db "NO VBE",        0
+    .noEDID:            db "NO EDID",       0
+    .noVBEModeFound:    db "NO GMODE",      0
     
 times 0x1FE - ($ - $$) db 0
 dw 0xAA55
