@@ -32,6 +32,9 @@ bits 16
 ;       segments of 20 bytes, and details any reserved or usable sctions. There
 ;       is no environment I know of that will need more than the available
 ;       ~480.5 KiB we have free(ish, stack) in the second memory segment.
+;   0x0007FF0 [...] The stack.
+;       This is just the stack we use during the boot process, and shouldn't be
+;       used as any sort of data export.
 ;-------------------------------------------------------------------------------
 
 %include "src/boot/bios/types/vbeInfo.nasm"
@@ -52,8 +55,10 @@ boot_launch:
         clc
         cld
 
-        xor bx, bx
+        ; We need the other registers, or have already cleared them.
         xor cx, cx
+        xor si, si
+        xor di, di
 
         mov es, ax
         mov fs, ax
@@ -61,13 +66,74 @@ boot_launch:
     ; Stack grows downward, and there are about 500KiB that we can use as free
     ; stack. We should NOT get anywhere close to that, however.
     .setupStack:
-        mov dx, 0x7FFF
-        mov ss, dx
-        xor dx, dx
-        mov sp, 0x000F
+        mov bx, 0x7FFF
+        mov ss, bx
+        xor bx, bx
+        mov sp, 0x0000
+
+boot_loadSecondary:
+    ; DL is already set to the boot disk!
+    .resetDisk:
+        ; Clearing AX wastes a cycle on first load, but saves an extra jump on
+        ; the success path.
+        xor ax, ax
+        int 0x13
+        jc .resetDisk
+    .loadDisk:
+        ; Rest of the parameters are already 0.
+        mov ah, 0x02
+        mov al, 0x02
+        ; Load the secondary sectors after this one.
+        mov bx, 0x7E00
+        mov cl, 0x02
+        int 0x13
+        jnc boot_getMemoryMap
+        cmp si, 0x03
+        je boot_abort.diskReadFail
+        inc si
+        jmp .resetDisk
+
+boot_getMemoryMap:
+    ; It feels so wrong to use extended registers in Real Mode...some BIOSes
+    ; need the top half of EAX cleared.
+    mov eax, 0x0000E820
+    xor ebx, ebx
+    mov ecx, 0x00000014
+    mov edx, 0x534D4150
+    mov di, 0x8200
+    .readEntry:
+        int 0x15
+        jc boot_abort.memoryMapReadFail
+        test ebx, ebx
+        jz boot_getGraphicsInfo
+        cmp ecx, 0x14
+        jne .tryAgain
+        add di, 0x14
+    .readNext:
+        xchg eax, edx
+        mov eax, 0x0000E820
+        jmp .readEntry
+    .tryAgain:
+        sub ebx, ecx
+        mov ecx, 0x00000014
+        jmp .readNext
+
+boot_getGraphicsInfo:
 
 cli
 hlt
+
+%include "src/boot/bios/abort.nasm"
+
+boot_strings:
+    ; Early-boot abort strings.
+    .characterTable:    db "0123456789ABCDEF"
+    .getVGAInfoFail:    db "10/4F00", 0
+    .getVGAModeFail:    db "10/4F01", 0
+    .diskReadFail:      db "13/0002", 0
+    .memoryMapReadFail: db "15/E820", 0
+    .getEDIDFail:       db "10/4F15", 0
+    .noVGAModeFound:    db "NO MODE", 0
     
 times 0x1FE - ($ - $$) db 0
 dw 0xAA55

@@ -25,6 +25,10 @@ boot_abort:
         mov si, boot_strings.diskReadFail
         mov cl, ah
         jmp boot__printErrorCode
+    .memoryMapReadFail:
+        mov si, boot_strings.memoryMapReadFail
+        mov cl, ah
+        jmp boot__printErrorCode
     .vgaUnsupported:
         mov si, boot_strings.getVGAInfoFail
         jmp boot__printErrorCode
