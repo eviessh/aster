@@ -92,7 +92,7 @@ nasm_sources=
 case "$bootloader" in
     bios)
         echo "Building the BIOS bootloader."
-        nasm_sources="$nasm_sources boot/bios/boot boot/bios/stage2"
+        nasm_sources="$nasm_sources boot/bios/stage1 boot/bios/stage2"
         ;;
     uefi)
         echo "Building the UEFI bootloader."
