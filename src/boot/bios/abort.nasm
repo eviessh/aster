@@ -9,12 +9,12 @@ bits 16
 ; <https://codeberg.org/eviessh/tinyboot>
 ;-------------------------------------------------------------------------------
 boot_abort:
-    .getVGAInfoFail:
-        mov si, boot_strings.getVGAInfoFail
+    .getVBEInfoFail:
+        mov si, boot_strings.getVBEInfoFail
         mov cl, ah
         jmp boot__printErrorCode
-    .getVGAModeFail:
-        mov si, boot_strings.getVGAModeFail
+    .getVBEModeFail:
+        mov si, boot_strings.getVBEModeFail
         mov cl, ah
         jmp boot__printErrorCode
     .getEDIDFail:
@@ -29,11 +29,11 @@ boot_abort:
         mov si, boot_strings.memoryMapReadFail
         mov cl, ah
         jmp boot__printErrorCode
-    .vgaUnsupported:
-        mov si, boot_strings.getVGAInfoFail
+    .vbeUnsupported:
+        mov si, boot_strings.getVBEInfoFail
         jmp boot__printErrorCode
-    .noVGAModeFound:
-        mov si, boot_strings.noVGAModeFound
+    .noVBEModeFound:
+        mov si, boot_strings.noVBEModeFound
         jmp boot__printErrorCode
     .edidUnsupported:
         mov si, boot_strings.getEDIDFail

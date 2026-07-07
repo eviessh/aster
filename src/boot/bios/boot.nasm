@@ -119,6 +119,16 @@ boot_getMemoryMap:
         jmp .readNext
 
 boot_getGraphicsInfo:
+    ; We need this signature to get VBE 2.0 information.
+    mov dword [ds:0x0500], "VBE2"
+    .getVBEInfo:
+        mov ax, 0x4F00
+        mov di, 0x0500
+        int 0x10
+        cmp al, 0x4F
+        jne boot_abort.vbeUnsupported
+        test ah, ah
+        jnz boot_abort.getVBEInfoFail
 
 cli
 hlt
@@ -128,12 +138,12 @@ hlt
 boot_strings:
     ; Early-boot abort strings.
     .characterTable:    db "0123456789ABCDEF"
-    .getVGAInfoFail:    db "10/4F00", 0
-    .getVGAModeFail:    db "10/4F01", 0
+    .getVBEInfoFail:    db "10/4F00", 0
+    .getVBEModeFail:    db "10/4F01", 0
     .diskReadFail:      db "13/0002", 0
     .memoryMapReadFail: db "15/E820", 0
     .getEDIDFail:       db "10/4F15", 0
-    .noVGAModeFound:    db "NO MODE", 0
+    .noVBEModeFound:    db "NO MODE", 0
     
 times 0x1FE - ($ - $$) db 0
 dw 0xAA55
