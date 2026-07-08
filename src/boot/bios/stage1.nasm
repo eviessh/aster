@@ -23,9 +23,9 @@ bits 16
 ;       bootloader data from the disk, gets the RAM memory map, and gets
 ;       graphics information from the motherboard / BIOS.
 ;   0x00007E00 [0x0400]: The secondary bootsectors.
-;       This section is loaded by the first on startup, and will setup the GDT,
-;       IDT, and PML4T Page Table. It will then load the kernel into the
-;       higher-half of memory and execute it.
+;       This section is loaded by the first on startup, and will enable A20,
+;       setup the GDT, IDT, and PML4T Page Table. It will then load the kernel
+;       into the higher-half of memory and execute it.
 ; [Memory 2]
 ;   0x00008200 [0x14 * ...] The system memory map.
 ;       This is recieved via the BIOS interrupt 0x15 AX=0xE820. It comes in
@@ -173,17 +173,17 @@ boot_getGraphicsInfo:
             jmp .retrieveModeInfos
         .checkMode:
             ; We only need the first half of the attributes.
-            mov al, byte [VBE_MODE_LOCATION + vbe_mode_t.attributes]
+            mov al, byte [di + vbe_mode_t.attributes]
             and al, 0b10011011
             cmp al, 0b10011011
             jne .nextMode
 
-            cmp bx, word [VBE_MODE_LOCATION + vbe_mode_t.width]
+            cmp bx, word [di + vbe_mode_t.width]
             jne .nextMode
-            cmp dx, word [VBE_MODE_LOCATION + vbe_mode_t.height]
+            cmp dx, word [di + vbe_mode_t.height]
             jne .nextMode
 
-            cmp byte [VBE_MODE_LOCATION + vbe_mode_t.bitsPerPixel], 0x20
+            cmp byte [di + vbe_mode_t.bitsPerPixel], 0x20
             jne .nextMode
         .setMode:
             mov ax, 0x4F02
@@ -193,6 +193,7 @@ boot_getGraphicsInfo:
             test ah, ah
             jnz boot_abort.setVBEModeFail
 
+            xor bx, bx
             jmp .nextMode
         .endSearch:
             test bx, bx
@@ -303,16 +304,16 @@ boot__printErrorCode:
 boot_strings:
     ; Early-boot abort strings.
     .characterTable:    db "0123456789ABCDEF"
-    .failMessage:       db "ERROR GOTTEN ", 0
-    .getVBEInfoFail:    db "10/4F00",       0
-    .getVBEModeFail:    db "10/4F01",       0
-    .setVBEModeFail:    db "10/4F02",       0
-    .diskReadFail:      db "13/0002",       0
-    .memoryMapReadFail: db "15/E820",       0
-    .getEDIDFail:       db "10/4F15",       0
-    .noVBE:             db "NO VBE",        0
-    .noEDID:            db "NO EDID",       0
-    .noVBEModeFound:    db "NO GMODE",      0
+    .failMessage:       db "ERROR GOTTEN ",  0
+    .getVBEInfoFail:    db "10/4F00",        0
+    .getVBEModeFail:    db "10/4F01",        0
+    .setVBEModeFail:    db "10/4F02",        0
+    .diskReadFail:      db "13/0002",        0
+    .memoryMapReadFail: db "15/E820",        0
+    .getEDIDFail:       db "10/4F15",        0
+    .noVBE:             db "NO VBE",         0
+    .noEDID:            db "NO EDID",        0
+    .noVBEModeFound:    db "NO GRAPHICMODE", 0
     
 times 0x1FE - ($ - $$) db 0
 dw 0xAA55
