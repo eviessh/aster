@@ -89,9 +89,9 @@ boot_elevate:
     or eax, 1 << 31 | 0x01
     mov cr0, eax
 
+    lgdt [boot_gdt.pointer]
     ; Time to jump into Long Mode! We need to do this to refresh all the
     ; instruction pointers and such.
-    lgdt [boot_gdt.pointer]
     jmp boot_gdt.code:boot_longMode
 
 bits 64

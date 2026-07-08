@@ -27,9 +27,9 @@ bits 16
 ;       setup the GDT, IDT, and PML4T Page Table. It will then load the kernel
 ;       into the higher-half of memory and execute it.
 ; [Memory 2]
-;   0x00008200 [0x14 * ...] The system memory map.
+;   0x00008200 [0x18 * ...] The system memory map.
 ;       This is recieved via the BIOS interrupt 0x15 AX=0xE820. It comes in
-;       segments of 20 bytes, and details any reserved or usable sctions. There
+;       segments of 24 bytes, and details any reserved or usable sctions. There
 ;       is no environment I know of that will need more than the available
 ;       ~480.5 KiB we have free(ish, stack) in the second memory segment.
 ;   0x0007FF0 [...] The stack.
@@ -98,27 +98,18 @@ boot_loadSecondary:
 boot_getMemoryMap:
     ; It feels so wrong to use extended registers in Real Mode...some BIOSes
     ; need the top half of EAX cleared.
-    mov eax, 0x0000E820
     xor ebx, ebx
-    mov ecx, 0x00000014
-    mov edx, 0x534D4150
     mov di, MEM_INFO_LOCATION
     .readEntry:
+        mov eax, 0x0000E820
+        mov ecx, 0x00000018
+        mov edx, 0x534D4150
         int 0x15
         jc boot_abort.memoryMapReadFail
         test ebx, ebx
         jz boot_getGraphicsInfo
-        cmp ecx, 0x14
-        jne .tryAgain
-        add di, 0x14
-    .readNext:
-        xchg eax, edx
-        mov eax, 0x0000E820
+        add di, 0x18
         jmp .readEntry
-    .tryAgain:
-        sub ebx, ecx
-        mov ecx, 0x00000014
-        jmp .readNext
 
 boot_getGraphicsInfo:
     ; We need this signature to get VBE 2.0 information.
