@@ -16,8 +16,12 @@ non-POSIX/non-MS environment.
 LINKS
 
 - Upstream <https://codeberg.org/eviessh/aster>
-    This is where the project is located on the web. No other code repository is
-    official or should be trusted. All tickets, issues, or queries should be
-    directed there.
+    This is where the project is located on the web. All tickets, issues, or
+    queries should be directed there. There are several read-only mirrors of the
+    project, all of which are listed below;
+    - GitHub Mirror <https://github.com/eviessh/aster>
+    - GitLab Mirror <https://gitlab.com/eviessh/aster>
+    Besides those listed above, no code repositories are official, and as such
+    no other code repositories should be trusted.
 
 --------------------------------------------------------------------------------
