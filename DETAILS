@@ -13,6 +13,32 @@ non-POSIX/non-MS environment.
 
 --------------------------------------------------------------------------------
 
+DEPENDENCIES
+
+Aster requires quite a few things to be bootable on your hardware (and may still
+fail if all these conditions are met);
+
+- ALL MODES
+  - An x86_64 processor. This may also be referred to as AMD64.
+  - A BIOS or UEFI-capable motherboard. Nearly all motherboards ever
+    manufactured should have at least a BIOS (sometimes referred to as Legacy
+    Boot).
+- BIOS MODE
+  - ACPI-compliance without serious bugs or imperfections, usually contained in
+    BIOSes after January 1st, 2001.
+  - VESA/DDC-compliance of recommended version 2Ab.
+  - VESA/VBE-compliance of at least version 2.0.
+  - Support for the INT 15, AX=E820 memory mapping interrupt. This nearly always
+    accompanies any BIOS after 2002.
+- UEFI MODE
+  - Not supported yet!
+
+NOTE: Aster is experimental! While at a very small chance, it may damage your
+system on boot attempt. Into the forseeable future, booting in a virtual machine
+is always the reccommended approach.
+
+--------------------------------------------------------------------------------
+
 LINKS
 
 - Upstream <https://codeberg.org/eviessh/aster>
