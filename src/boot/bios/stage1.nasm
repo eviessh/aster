@@ -23,9 +23,9 @@ bits 16
 ;       bootloader data from the disk, gets the RAM memory map, and gets
 ;       graphics information from the motherboard / BIOS.
 ;   0x00007E00 [0x0400]: The secondary bootsectors.
-;       This section is loaded by the first on startup, and will enable A20,
-;       setup the GDT, IDT, and PML4T Page Table. It will then load the kernel
-;       into the higher-half of memory and execute it.
+;       This section is loaded by the first on startup, and will sort the memory
+;       map, enable A20, setup the GDT, IDT, and PML4T Page Table. It will then
+;       load the kernel into the higher-half of memory and execute it.
 ; [Memory 2]
 ;   0x00008200 [0x18 * ...] The system memory map.
 ;       This is recieved via the BIOS interrupt 0x15 AX=0xE820. It comes in
@@ -65,6 +65,7 @@ boot_launch:
         mov es, ax
         mov fs, ax
         mov gs, ax
+
     ; Stack grows downward, and there are about 500KiB that we can use as free
     ; stack. We should NOT get anywhere close to that, however.
     .setupStack:
@@ -96,20 +97,49 @@ boot_loadSecondary:
         jmp .resetDisk
 
 boot_getMemoryMap:
-    ; It feels so wrong to use extended registers in Real Mode...some BIOSes
-    ; need the top half of EAX cleared.
+    ; It feels so wrong to use extended registers in Real Mode.
     xor ebx, ebx
     mov di, MEM_INFO_LOCATION
     .readEntry:
+        ; ACPI 3.x needs this edit to put its information into memory.
+        mov dword [es:di], 0x1
+
         mov eax, 0x0000E820
         mov ecx, 0x00000018
         mov edx, 0x534D4150
         int 0x15
         jc boot_abort.memoryMapReadFail
         test ebx, ebx
-        jz boot_getGraphicsInfo
+        jz .finish
+
+        ; Skip any zero-length entries, though we likely will not get any of
+        ; these from any conforming BIOS.
+        jcxz .readEntry
+    .probeACPI:
+        cmp cl, 0x18
+        je .handleACPI
+        ; Clear the ACPI extension bits so we don't acccidentally get an idea of
+        ; memory that's not true.
+        mov dword [es:di + 0x14], 0
+        jmp .handleNormal
+    .handleACPI:
+        ; Skip when ACPI tells us to.
+        test byte [es:di + 0x14], 0x1
+        je .readEntry
+    .handleNormal:
+        ; Skip any zero-region-length entries, as they're useless to us.
+        mov ecx, [es:di + 0x8]
+        or ecx, [es:di + 0xC]
+        jz .readEntry
+
+        ; Always add 0x18 even when the entry is not so long, in order to make
+        ; access easier later.
         add di, 0x18
         jmp .readEntry
+    .finish:
+        ; A table of length 0 is useless to us!
+        cmp di, MEM_INFO_LOCATION
+        je boot_abort.memoryMapReadFail
 
 boot_getGraphicsInfo:
     ; We need this signature to get VBE 2.0 information.
@@ -244,19 +274,8 @@ boot_abort:
 ; <https://codeberg.org/eviessh/tinyboot>
 ;-------------------------------------------------------------------------------
 boot__printErrorCode:
-    push si
-    mov si, boot_strings.failMessage
-
     xor bx, bx
     mov ah, 0x0E
-    .loop:
-        lodsb
-        test al, al
-        jz .doneInitial
-        int 0x10
-        jmp .loop
-    .doneInitial:
-        pop si
     .string:
         lodsb
         test al, al
@@ -295,7 +314,6 @@ boot__printErrorCode:
 boot_strings:
     ; Early-boot abort strings.
     .characterTable:    db "0123456789ABCDEF"
-    .failMessage:       db "ERROR GOTTEN ",  0
     .getVBEInfoFail:    db "10/4F00",        0
     .getVBEModeFail:    db "10/4F01",        0
     .setVBEModeFail:    db "10/4F02",        0
