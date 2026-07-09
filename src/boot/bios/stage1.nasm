@@ -324,7 +324,7 @@ boot_strings:
     .getEDIDFail:       db "10/4F15",        0
     .noVBE:             db "NO VBE",         0
     .noEDID:            db "NO EDID",        0
-    .noVBEModeFound:    db "NO GRAPHICMODE", 0
+    .noVBEModeFound:    db "NO GRA MODE",    0
     
 times 0x1FE - ($ - $$) db 0
 dw 0xAA55

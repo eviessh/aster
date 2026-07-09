@@ -1,7 +1,40 @@
 org 0x7E00
 bits 16
 
+%include "inc/boot/bios/locations.inc"
 %include "inc/boot/bios/segments.inc"
+
+; Sorts entries in base address order (for now)
+; Insertion sort
+boot_sortMemoryMap:
+    xchg bx, bx
+
+    xor di, di
+    mov si, 0x18
+    .sortEntry:
+        dec bp
+
+        mov eax, dword [MEM_INFO_LOCATION + di]
+        
+        .checkList:
+            test si, si
+            jz .doneCheck
+
+            mov ebx, dword [MEM_INFO_LOCATION + si - 0x18]
+            cmp ebx, eax
+            jle .doneCheck
+            
+            mov dword [MEM_INFO_LOCATION + si], ebx
+            sub si, 0x18
+            jmp .checkList
+        .doneCheck:
+            mov dword [MEM_INFO_LOCATION + si], eax
+            add di, 0x18
+            mov si, di
+            add si, 0x18
+        
+        test bp, bp
+        jnz .sortEntry
 
 ;-------------------------------------------------------------------------------
 ; Enable the A20 line, allowing us to access the even MiBs of memory and
