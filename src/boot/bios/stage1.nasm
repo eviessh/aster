@@ -99,6 +99,7 @@ boot_loadSecondary:
 boot_getMemoryMap:
     ; It feels so wrong to use extended registers in Real Mode.
     xor ebx, ebx
+    xor bp, bp
     mov di, MEM_INFO_LOCATION
     .readEntry:
         ; ACPI 3.x needs this edit to put its information into memory.
@@ -135,6 +136,7 @@ boot_getMemoryMap:
         ; Always add 0x18 even when the entry is not so long, in order to make
         ; access easier later.
         add di, 0x18
+        inc bp
         jmp .readEntry
     .finish:
         ; A table of length 0 is useless to us!
