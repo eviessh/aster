@@ -11,6 +11,10 @@ patterns, directory hierarchies, and paradigms. Aster should not be used as a
 daily driver, instead as a fun experiment to see what computing can be like in a
 non-POSIX/non-MS environment.
 
+AI pull requests will not, and will never, be accepted into any part of the
+project. If you use generative AI on your commit, it will be rejected,
+regardless of its percieved quality.
+
 --------------------------------------------------------------------------------
 
 LINKS
