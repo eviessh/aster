@@ -1,12 +1,8 @@
-attributes: interpreted.
-imports;    build, cmd.
+import std-cmd.
+import std-build.
 
-buildArguments is struc build-ARGUMENTS = {}.
+buildArguments: struct std-build-ARGUMENTS = {}.
+buildArguments-sources = std-build-allFilesInSrc.
 
-foreach; argument, cmd-arguments
-{
-    match argument
-    {
-        build-standardArguments(buildArguments).
-    }.
-}
+std-build-useDefaultArguments with buildArguments.
+
