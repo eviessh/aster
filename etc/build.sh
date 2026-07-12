@@ -113,6 +113,19 @@ fi
 mkdir -p 'bld' || exit 1
 echo "mkdir -p bld"
 
+#-------------------------------------------------------------------------------
+# Compile the bootstrap Aster compiler. This will emit the Linux-only code that
+# will compile the second-stage Aster compiler (also Linux only), which will
+# provide an interface to compile the kernel with.
+#-------------------------------------------------------------------------------
+
+mkdir -p 'bld/compiler' || exit 1
+echo 'mkdir -p bld/compiler'
+nasm -f 'elf64' 'src/compiler/bootstrap.nasm' -o 'bld/compiler/bootstrap.o' || exit 1
+echo 'nasm -f elf64 src/compiler/bootstrap.nasm -o bld/compiler/bootstrap.o'
+ld 'bld/compiler/bootstrap.o' -o 'bld/compiler/bootstrap' || exit 1
+echo 'ld bld/compiler/bootstrap.o -o bld/compiler/bootstrap'
+
 rm 'bld/aster.img'
 for file in $nasm_sources; do
     # TODO: Really bad way to do this. Fix that.

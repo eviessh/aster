@@ -1,0 +1,1 @@
+%define EXIT_SYSCALL 0x3C

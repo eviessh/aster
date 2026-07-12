@@ -1,0 +1,24 @@
+[[TITLE]] The Aster Filesystem
+[[TAGS]] aster filesystem fs file directory structure
+[[DESCRIPTION]] The table of contents and overview of the AsterOS Manual.
+[[CONTENTS]]
+Aster uses its own filesystem that lacks the traditional file extensions and
+categorizations inherent in other file systems, opting instead for a tag-based
+approach. Each file can have up to 255 "tags", which are little categories that
+will help you find any given file when also given information about its name.
+Because of this system, organizational structures can appear naturally as
+collections of files with similar tags.
+
+The list of all currently defined tags is as follows;
+
+[[LIST]]
+-- system: System files.
+-- hidden: Hidden files to not be displayed by default.
+-- source: A source code file.
+-- include: An "include" or interface file.
+-- executable: An executable file.
+-- script: An interpreted file.
+[[ENDLIST]]
+
+All other tag indices are considered "reserved", and should neither be used or
+defined by any application, for the purpose of forward-facing compatibility.

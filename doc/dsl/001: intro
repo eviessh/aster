@@ -1,0 +1,30 @@
+[[TITLE]] The Aster DSL
+[[TAGS]] aster dsl language
+[[DESCRIPTION]] An introductory document to the Aster DSL.
+[[CONTENTS]]
+Aster is a very tightly-knit operating system, and its applications are no
+different. Each Aster application is written in the Aster DSL, with source files
+tagged as "Aster Source" in the file system. Aster is a language not remarkably
+unlike a mix of C and Jai in terms of semantics, but syntactically it is rather
+unique.
+
+To build Aster source code, you'll just need the built-in Aster Development
+Tools that come with any installation of the operating system. Simply run the
+following in your AsterOS terminal;
+
+[[CODE:aster_shell]]
+new_project; LANGUAGE:aster, TYPE:executable, "<project-name>".
+[[ENDCODE]]
+
+and you'll be set up with a complete development environment and a minimal
+example for you to begin developing whatever project you have in mind. To
+actually begin development, open the Aster "IDE" environment via
+
+[[CODE:aster_shell]]
+open; TYPE:project, "<project-name>".
+[[ENDCODE]]
+
+in your terminal. Provided will be completely toggleable syntax highlighting,
+code completion, and a minimal LSP to detect errors, all running in the Jasmine
+text editor. If you want more information specifically about the editor, please
+see the [[REF;jasmine,specialized manual]]. You'll notice it's a lot like Vim.

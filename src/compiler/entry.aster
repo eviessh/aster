@@ -1,0 +1,7 @@
+import("cmd", "io").
+
+entry :: (args :: cmdarguments) -> u32
+{
+    io.write
+}
+
