@@ -1,0 +1,62 @@
+interpreted.
+
+import file.
+
+max_sources is const U16 = 256.
+
+dependencies: space
+{
+    max_aliases is const U8 = 8.
+    max_entries is const U8 = 64.
+
+    ENTRY: struc
+    {
+        aliases is atype file-NAME@max_aliases.
+        global  is BOOL.
+        package is BOOL.
+    }.
+
+    TREE is alias = struc ENTRY@max_entries.
+}.
+
+OPTIMIZATION: bflag
+{
+    none,
+    debug,
+    size,
+    speed
+}.
+
+FLAGS: bmask
+{
+    none
+}.
+
+OPERATION: bmask
+{
+    check,
+    format,
+    compile,
+    link
+}.
+
+ARGUMENTS: struc
+{
+    optimization is bflag OPTIMIZATION = debug.
+    flags        is bmask FLAGS        = none.
+    operation    is bmask OPERATION    = check.
+    dependencies is struc dependencies-TREE.
+    sources      is atype file-NAME@max_sources.
+}.
+
+standardArguments: macro <= arguments: struc ARGUMENTS
+    [[only_inside: match]]
+{
+    to "help":      build-printUsage.
+    to "format":    arguments-operation = format.
+    to "compile":   arguments-operation = compile.
+    to "link":      arguments-operation = link.
+    to "for_speed": arguments-optimization = speed.
+    to "for_size":  arguments-optimization = size.
+}.
+

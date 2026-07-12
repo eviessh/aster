@@ -1,0 +1,12 @@
+attributes: interpreted.
+imports;    build, cmd.
+
+buildArguments is struc build-ARGUMENTS = {}.
+
+foreach; argument, cmd-arguments
+{
+    match argument
+    {
+        build-standardArguments(buildArguments).
+    }.
+}
