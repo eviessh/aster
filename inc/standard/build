@@ -1,22 +1,20 @@
-interpreted.
+import std-file.
 
-import file.
+max_sources: const U16 = 256.
 
-max_sources is const U16 = 256.
-
-dependencies: space
+dependencies: subspace
 {
-    max_aliases is const U8 = 8.
-    max_entries is const U8 = 64.
+    max_aliases: const U8 = 8.
+    max_entries: const U8 = 64.
 
-    ENTRY: struc
+    ENTRY: struct
     {
-        aliases is atype file-NAME@max_aliases.
-        global  is BOOL.
-        package is BOOL.
+        aliases: alias file-NAME@max_aliases.
+        global:  BOOL.
+        package: BOOL.
     }.
 
-    TREE is alias = struc ENTRY@max_entries.
+    TREE: alias = struct ENTRY@max_entries.
 }.
 
 OPTIMIZATION: bflag
