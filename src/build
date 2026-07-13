@@ -1,8 +1,7 @@
-import std-cmd.
-import std-build.
+import build, fs.
 
-buildArguments: struct std-build-ARGUMENTS = {}.
-buildArguments-sources = std-build-allFilesInSrc.
+buildArguments: struct build-ARGUMENTS = {}.
+buildArguments-sources = fs-allFilesInDir; "src", exclude = "boot".
 
-std-build-useDefaultArguments with buildArguments.
+build-useDefaultArguments with buildArguments.
 

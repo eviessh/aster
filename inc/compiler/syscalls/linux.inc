@@ -1,1 +1,3 @@
-%define EXIT_SYSCALL 0x3C
+%define OPEN_SYSCALL  0x02
+%define FSTAT_SYSCALL 0x05
+%define EXIT_SYSCALL  0x3C
