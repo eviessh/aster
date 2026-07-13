@@ -1,10 +1,10 @@
-import std-io.
+import; basic, io.
 
 path: const BOOL = false.
 
 if path then
-    std-io-print "True path!".
+    io-print "True path!".
 otherwise
-    std-io-print "False path!".
+    io-print "False path!".
 converge.
 

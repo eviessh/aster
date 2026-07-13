@@ -1,4 +1,4 @@
-import std-io.
+import io.
 
 TEST_FLAGS: flags
 {
@@ -18,15 +18,15 @@ TEST_MASK: bitmask
 flagTest: flags TEST_FLAGS = flag1.
 maskTest: bitmask TEST_MASK = mask1 | mask3.
 
-if flagTest = TEST_FLAGS:flag1 then
-    std-io-print "Flag1 selected.".
+if flagTest = TEST_FLAGS-flag1 then
+    io-print "Flag1 selected.".
 otherwise
-    std-io-print "Other flag selected.".
+    io-print "Other flag selected.".
 converge.
 
 if maskTest & TEST_MASK-mask1 != 0 then
-    std-io-print "Mask1 selected!".
+    io-print "Mask1 selected!".
 otherwise
-    std-io-print "Mask1 not present.".
+    io-print "Mask1 not present.".
 converge.
 

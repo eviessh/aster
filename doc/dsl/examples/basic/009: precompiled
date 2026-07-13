@@ -1,0 +1,18 @@
+import; basic, io.
+
+noYield: precompiled =
+{
+    a: U8 = 5.
+    b: U32 = 324324.
+    c: U64 = a + b.
+
+    io-printU64 c.
+}.
+
+d: precompiled(U8) =
+{
+    e: U8 = 4.
+    f: U8 = 7.
+    yield e + f.
+}.
+io-printU8 d.

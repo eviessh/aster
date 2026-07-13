@@ -1,0 +1,10 @@
+[[global_namespace]]
+
+BOOL_FLAGS: flags(bit@1) [[global_flags]] [[no_export]]
+{
+    false,
+    true
+}.
+BOOL: alias(flags BOOL_FLAGS).
+
+nil: const BOOL [[implicitly_cast]] = false.

@@ -1,0 +1,12 @@
+import; basic, io.
+
+a: U16 = 5.
+b: U16# = a:U16#.
+
+io-printPointer b.
+io-printU16 $b.
+
+$b = 3.
+
+io-printPointer b.
+io-printU16 $b.

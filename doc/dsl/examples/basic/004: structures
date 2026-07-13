@@ -1,4 +1,4 @@
-import std-io.
+import; basic, io.
 
 TEST_STRUCT: struct
 {
@@ -7,12 +7,13 @@ TEST_STRUCT: struct
     u64Parameter: U64.
 }.
 
-structureTest: struct TEST_STRUCT = {
+structureTest: struct TEST_STRUCT =
+{
     u8Parameter = 32,
     u64Parameter = 3921
 }.
 
-std-io-printU8 structureTest-u8Parameter.
-std-io-printF16 structureTest-f16Parameter.
-std-io-printU64 structureTest-u64Parameter.
+io-printU8 structureTest-u8Parameter.
+io-printF16 structureTest-f16Parameter.
+io-printU64 structureTest-u64Parameter.
 

@@ -1,4 +1,4 @@
-import std-io.
+import io.
 
-std-io-print "Hello, world!".
+io-print "Hello, world!".
 

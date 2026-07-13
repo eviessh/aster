@@ -1,15 +1,22 @@
-import std-io.
+import; basic, io.
 
-yieldNothing: function with; U8[] string =
+takeNothing: func =
 {
-    std-io-print string.
+    io-print("This is a function with no parameters.").
 }.
 
-yieldSomething: function yields U16 =
+yieldNothing: func(string: U8#) =
 {
-    yieldNothing with "This function yields nothing!".
-    yield 2292.
+    takeNothing.
+    io-print string.
 }.
 
-yieldSomething.
+yieldSomething: func(number: U16, string: U8#) -> U32  =
+{
+    yieldNothing string.
+    yield number:U32.
+}.
+
+yieldSomething; 2939, "This function yields nothing, but was called by "
+    "yieldSomething!".
 
