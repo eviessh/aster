@@ -1,0 +1,8 @@
+import std-io.
+
+until i: U8 = 100 do
+    std-io-printU8 i.
+    std-io-print "\n".
+    i++.
+done.
+

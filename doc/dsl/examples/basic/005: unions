@@ -1,0 +1,23 @@
+import std-io.
+
+TEST_UNION: union
+{
+    option1: struct
+    {
+        u8Parameter: U8.
+        u16Parameter: U16.
+    }.
+    option2: U32.
+}.
+
+unionTest: union TEST_UNION = {
+    tag = option1,
+    option1 = {
+        u8Parameter = 16,
+        u16Parameter = 2134
+    }
+}.
+
+std-io-printU8 unionTest-option1-u8Parameter.
+std-io-printU16 unionTest-option1-u16Parameter.
+

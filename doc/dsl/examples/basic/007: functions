@@ -1,0 +1,15 @@
+import std-io.
+
+yieldNothing: function with; U8[] string =
+{
+    std-io-print string.
+}.
+
+yieldSomething: function yields U16 =
+{
+    yieldNothing with "This function yields nothing!".
+    yield 2292.
+}.
+
+yieldSomething.
+

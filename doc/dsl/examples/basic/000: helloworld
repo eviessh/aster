@@ -1,0 +1,4 @@
+import std-io.
+
+std-io-print "Hello, world!".
+

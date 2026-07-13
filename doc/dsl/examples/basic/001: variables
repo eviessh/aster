@@ -1,0 +1,13 @@
+import std-io.
+
+x: const U8 = 23.
+y: const U16 = 3445.
+z: const U64 = x * y.
+
+f1: const F16 = 0.34.
+f2: const F32 = 0.45575.
+f3: const F64 = x * y + f1.
+
+std-io-printU16 y.
+std-io-printF64 f3.
+
