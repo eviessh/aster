@@ -9,7 +9,7 @@ noYield: precompiled =
     io-printU64 c.
 }.
 
-d: precompiled(U8) =
+d: precompiled -> U8 =
 {
     e: U8 = 4.
     f: U8 = 7.

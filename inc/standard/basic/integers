@@ -1,10 +1,10 @@
-[[global_namespace]]
+[global_namespace]
 
-U8:   alias(bit@8)   [[unsigned]].
-U16:  alias(bit@16)  [[unsigned]].
-U32:  alias(bit@32)  [[unsigned]].
-U64:  alias(bit@64)  [[unsigned]].
-U128: alias(bit@128) [[unsigned]].
+U8:   alias(bit@8)   [unsigned].
+U16:  alias(bit@16)  [unsigned].
+U32:  alias(bit@32)  [unsigned].
+U64:  alias(bit@64)  [unsigned].
+U128: alias(bit@128) [unsigned].
 
 S8:   alias(bit@8).
 S16:  alias(bit@16).

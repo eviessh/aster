@@ -5,13 +5,13 @@ takeNothing: func =
     io-print("This is a function with no parameters.").
 }.
 
-yieldNothing: func(string: U8#) =
+yieldNothing: func[string: U8#] =
 {
     takeNothing.
     io-print string.
 }.
 
-yieldSomething: func(number: U16, string: U8#) -> U32  =
+yieldSomething: func[number: U16, string: U8#] -> U32  =
 {
     yieldNothing string.
     yield number:U32.

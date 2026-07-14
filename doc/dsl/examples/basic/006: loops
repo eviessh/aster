@@ -1,8 +1,21 @@
 import; basic, io.
 
-until i: U8 = 100 do
+noYield: loop[i: U8 = 0] =
+{
     io-printU8 i.
     io-print "\n".
+
     i++.
-done.
+    if[i ?>= 100] = yield.
+}
+
+a: loop[i: U8 = 0] -> U8 =
+{
+    io-printU8 i.
+    io-print "\n".
+
+    i++.
+    if[i ?>= 100] = yield i.
+}
+io-printU8 a.
 
