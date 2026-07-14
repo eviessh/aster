@@ -2,9 +2,6 @@ import; basic, io.
 
 path: const BOOL = false.
 
-if path then
-    io-print "True path!".
-otherwise
-    io-print "False path!".
-converge.
+if path ?. = io-print "True path!".
+else       = io-print "False path!".
 
