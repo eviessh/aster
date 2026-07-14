@@ -89,6 +89,8 @@ A complete list of recognized Asterdoc tags are as follows;
 --| Format: [[I;<text>]]
 -- [[B]] Bold text.
 --| Format: [[B;<text>]]
+-- [[HEADER]] A header marker.
+--| Format: [[HEADER]] <text>
 [[ENDLIST]]
 
 Note that, when specifying one of these tags in the source file, it must be

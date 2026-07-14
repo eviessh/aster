@@ -1,0 +1,49 @@
+[[TITLE]] The Aster DSL Syntax
+[[TAGS]] aster dsl language syntax
+[[DESCRIPTION]] An in-depth explanation of the Aster DSL syntax.
+
+The Aster DSL is a very consistent way. There is only one way to do most
+semantic concepts, but each way may not be immediately intuitive for some. This
+document goes over the important overall parts of the DSL's syntax, including
+conditionals, loops, functions, and variables, among some more specialized
+semantics.
+
+[[HEADER]] Types
+The DSL is statically typed. This means that all variables have one type known
+at compile time, and can not be repurposed to store different types of data. The
+DSL has several kinds of types, one "concrete" type (a type that directly means
+a certain piece of data will be available on the device) and a handful of
+"structural" types (a type used to aggregate variables into a more
+understandable medium.
+
+The one intrinsic "concrete" type is the bit. Bits are used to define more
+complex data types in the form of arrays, where a type like a U32 is defined as
+an alias to the statement [[I:bit@32]]. The "normal" instrinsic types (U8, S16,
+etc.) one would expect a language to come with are defined in the standard
+"basic" module provided with the Aster DSL installation, and are explained in a
+later section of this manual page.
+
+The instrinsic "structural" types are fairly easy to comprehend; the structure
+("struct"), the bitmask ("bitmask"), the flagset ("flags"), and the union
+("union"). A structure in the DSL is exactly as it is in C; an aggregation of
+variables. However, the DSL provides functionality for giving structure
+variables default arguments by assigning to them within the type declaration. A
+union is identical to its usage in C, except it can be tagged, which is
+discussed [[REF;dsl-advanced,later in this manual]].
+
+"Bitmasks" and "Flagsets" are both variations of the C concept of an
+"enumerator"; a symbolic value attached to a numeric constant for readability's
+sake. In the case of a bitmask, these symbolic values can be bitwise ORed
+together to allow multiple flags at once, while in the case of a flagset, each
+flag is mutually exclusive. You can specify the underlying type of both a
+bitmask and a flagset, which is discussed [[REF;dsl-advanced,later in this
+manual]].
+
+There is also the notion of an "alias" type. This like a [[I:typedef]] in C or a
+[[I:using]] declaration in C++, it simply aliases one type to another. When
+defining an alias, or in fact ANY type with a name, that name is expected to be
+in all uppercase. This allows for easier visual distinction of type from
+identifier when statically analyzing code.
+
+When declaring a variable, the type is specified after the name, preceded by a
+colon. This is similar in syntax to Jai.

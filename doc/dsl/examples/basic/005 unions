@@ -1,6 +1,6 @@
 import; basic, io.
 
-TEST_UNION: union
+TEST_UNION: union [tagged]
 {
     option1: struct
     {
