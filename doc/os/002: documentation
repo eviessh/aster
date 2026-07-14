@@ -77,8 +77,14 @@ A complete list of recognized Asterdoc tags are as follows;
 --| [[ENDTABLE]]
 -- [[CODE]] A code snippet.
 --| Format: [[CODE]] language
+--| [[ENDCODE]]
 -- [[REF]] A reference to another manual page.
 --| Format: [[REF;<page>,<shown text>]]
+-- [[SEEALSO]] A list of other useful manual pages for this topic.
+--| Format: [[SEEALSO]]
+--| -- [[REF;<page>,<title>]]
+--| -- ...
+--| [[ENDSEEALSO]]
 -- [[I]] Italic text.
 --| Format: [[I;<text>]]
 -- [[B]] Bold text.
