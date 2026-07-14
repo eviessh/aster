@@ -1,0 +1,90 @@
+[[TITLE]] The Aster Documentation
+[[TAGS]] aster doc documentation book howto explain
+[[DESCRIPTION]] The description of the Aster documentation.
+
+Aster is an extremely documented operating system. All of its source code is
+completely available to anyone with an internet connection, and those lucky
+folks are free to distribute it to those without one. There is also copious
+amounts of in-system documentation for various functions, concepts, and even
+whole books about designing systems for yourself. In order to accomplish this
+widespread documentation, however, there are several rings Aster jumps through.
+
+Firstly, there is the issue of getting the documentation into a proper format.
+Not every system is the same, and not every user is the same, so we can't
+necessarily store all required style information (italics, bolds, colors,
+indents, etc.) in the documentation files themselves. To remedy this fact, it
+was actually *nix that came up with a solution many years ago with the Roff
+family of tools. Store little metasequences that have the desired effect
+encoded, and the problem goes away. The problem with (G/T/N)Roff is that the
+syntax is wholly unreadable. Getting into it as a non-veteran is very difficult,
+and many are stumped by its strange acronyms when browsing through the
+[[I;man/]] folder of their system.
+
+Our solution to this problem is the Asterdoc format, a similar idea to Roff with
+much easier-to-understand semantics and less unneeded features, as it's designed
+specifically for documentation and nothing else. Writing an Asterdoc file is
+very easy; You are REQUIRED to have only four things;
+
+[[LIST]]
+-- A title.
+-- Some tags.
+-- A description.
+-- Contents.
+[[ENDLIST]]
+
+The title serves as a direct go-to when someone searches for your concept using
+[[I;explain]]. The tags serve their purpose in the searching algorithm as
+weights for ultimately the same purpose, providing a sorted list of what we
+think the user is looking for. The description provides an explanation of the
+page when it is in said list, so the user can confirm their search. The contents
+are exactly that, contents. After the three aforementioned things are set in the
+document, the contents are the rest of the page. The page contents can have
+other tags within it to style things like code segments, lists, tables, and
+more.
+
+Asterdoc files are then added to the system via [[I;understand <astdoc-file>]].
+That will copy the source code into the system's safekeeping area until it's
+updated, and compile it into the binary blob used for getting these pages to the
+output extremely quickly. If, for some reason, you need to regenerate that blob,
+please see the [[REF;understand,manual page for the understand command]]. Usage
+is detailed there.
+
+A complete list of recognized Asterdoc tags are as follows;
+
+[[LIST]]
+-- [[TITLE]] The line title of the page, must only be specified once.
+--| Format: [[TITLE]] <title>
+-- [[TAGS]] A line of tags for the page, must only be specified once.
+--| Format: [[TAGS]] <tag> <tag> <tag> ...
+-- [[DESCRIPTION]] A line description for the page, must only be specified once.
+--| Format: [[DESCRIPTION]] <description>
+-- [[LIST]] A list of items.
+--| Format: [[LIST]]
+--| -- [[<item title (optional)> <item>
+--| --| <item continuation>
+--| -- ...
+--| [[ENDLIST]]
+-- [[SECTION]] A section within a table.
+--| Format: [[SECTION]] <title>
+--| -- [[<item title (optional)> <item>
+--| --| <item continuation>
+--| [[ENDSECTION]]
+-- [[TABLE]] A table of items in sections.
+--| Format: [[TABLE]]
+--| [[SECTION]] <section>
+--| [[ENDSECTION]]
+--| ...
+--| [[ENDTABLE]]
+-- [[CODE]] A code snippet.
+--| Format: [[CODE]] language
+-- [[REF]] A reference to another manual page.
+--| Format: [[REF;<page>,<shown text>]]
+-- [[I]] Italic text.
+--| Format: [[I;<text>]]
+-- [[B]] Bold text.
+--| Format: [[B;<text>]]
+[[ENDLIST]]
+
+Note that, when specifying one of these tags in the source file, it must be
+enclosed in double brackets ([) on either side. If using Jasmine, syntax
+highlighting and a basic LSP will guide you on which tags to use and how.
