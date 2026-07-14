@@ -37,11 +37,11 @@ bits 16
 ;       used as any sort of data export.
 ;-------------------------------------------------------------------------------
 
-%include "inc/boot/bios/types/vbeInfo.inc"
-%include "inc/boot/bios/types/vbeMode.inc"
-%include "inc/boot/bios/types/edid.inc"
+%include "inc/boot/bios/types/vbeInfo.nasm"
+%include "inc/boot/bios/types/vbeMode.nasm"
+%include "inc/boot/bios/types/edid.nasm"
 
-%include "inc/boot/bios/locations.inc"
+%include "inc/boot/bios/locations.nasm"
 
 boot_launch:
     ; Some BIOSes spit us out at 0x7C00:0x0000, and others spit us out at

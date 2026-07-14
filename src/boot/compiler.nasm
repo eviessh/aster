@@ -1,6 +1,6 @@
 bits 64
 
-%include "inc/compiler/syscalls/linux.inc"
+%include "inc/compiler/syscalls/linux.nasm"
 
 global _start
 

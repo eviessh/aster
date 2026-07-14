@@ -1,8 +1,8 @@
 org 0x7E00
 bits 16
 
-%include "inc/boot/bios/locations.inc"
-%include "inc/boot/bios/segments.inc"
+%include "inc/boot/bios/locations.nasm"
+%include "inc/boot/bios/segments.nasm"
 
 ;-------------------------------------------------------------------------------
 ; Enable the A20 line, allowing us to access the even MiBs of memory and
