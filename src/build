@@ -1,7 +1,0 @@
-import build, fs.
-
-buildArguments: struct build-ARGUMENTS = {}.
-buildArguments-sources = fs-allFilesInDir; "src", exclude = "boot".
-
-build-useDefaultArguments with buildArguments.
-

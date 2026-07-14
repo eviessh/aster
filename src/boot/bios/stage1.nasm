@@ -23,9 +23,9 @@ bits 16
 ;       bootloader data from the disk, gets the RAM memory map, and gets
 ;       graphics information from the motherboard / BIOS.
 ;   0x00007E00 [0x0400]: The secondary bootsectors.
-;       This section is loaded by the first on startup, and will sort the memory
-;       map, enable A20, setup the GDT, IDT, and PML4T Page Table. It will then
-;       load the kernel into the higher-half of memory and execute it.
+;       This section is loaded by the first on startup, and will enable A20,
+;       setup the GDT, IDT, and PML4T Page Table. It will then load the kernel
+;       into the higher-half of memory and execute it.
 ; [Memory 2]
 ;   0x00008200 [0x18 * ...] The system memory map.
 ;       This is recieved via the BIOS interrupt 0x15 AX=0xE820. It comes in
