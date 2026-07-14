@@ -156,6 +156,8 @@ boot_getGraphicsInfo:
         jnz boot_abort.getVBEInfoFail
     .getEDIDInfo:
         mov ax, 0x4F15
+        xor cx, cx
+        xor dx, dx
         inc bl
         mov di, VBE_EDID_LOCATION
         int 0x10
@@ -316,15 +318,15 @@ boot__printErrorCode:
 boot_strings:
     ; Early-boot abort strings.
     .characterTable:    db "0123456789ABCDEF"
-    .getVBEInfoFail:    db "10/4F00",        0
-    .getVBEModeFail:    db "10/4F01",        0
-    .setVBEModeFail:    db "10/4F02",        0
-    .diskReadFail:      db "13/0002",        0
-    .memoryMapReadFail: db "15/E820",        0
-    .getEDIDFail:       db "10/4F15",        0
-    .noVBE:             db "NO VBE",         0
-    .noEDID:            db "NO EDID",        0
-    .noVBEModeFound:    db "NO GRA MODE",    0
+    .getVBEInfoFail:    db "10/4F00", 0
+    .getVBEModeFail:    db "10/4F01", 0
+    .setVBEModeFail:    db "10/4F02", 0
+    .diskReadFail:      db "13/0002", 0
+    .memoryMapReadFail: db "15/E820", 0
+    .getEDIDFail:       db "10/4F15", 0
+    .noVBE:             db "NOVBE",   0
+    .noEDID:            db "NOEDID",  0
+    .noVBEModeFound:    db "NOMODE",  0
     
 times 0x1FE - ($ - $$) db 0
 dw 0xAA55
