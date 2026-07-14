@@ -165,7 +165,7 @@ if [ "$run" = "qemu" ]; then
     fi
 
     (trap 'kill 0' SIGINT; qemu-system-x86_64 -drive file=bld/aster.img,format=raw -s -S -full-screen || exit 255 & )
-    gdb -x 'etc/debugging/gdbsetup.gdb'
+    gdb -x 'etc/debugging/gdbsetup'
     wait
 elif [ "$run" = "bochs" ]; then
     if ! command -v bochs 1>/dev/null 2>&1; then
