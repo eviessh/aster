@@ -1,7 +1,7 @@
 [[TITLE]] The Aster DSL
 [[TAGS]] aster dsl language
 [[DESCRIPTION]] An introductory document to the Aster DSL.
-[[CONTENTS]]
+
 Aster is a very tightly-knit operating system, and its applications are no
 different. Each Aster application is written in the Aster DSL, with source files
 tagged as "Aster Source" in the file system. Aster is a language not remarkably
@@ -12,7 +12,7 @@ To build Aster source code, you'll just need the built-in Aster Development
 Tools that come with any installation of the operating system. Simply run the
 following in your AsterOS terminal;
 
-[[CODE:aster_shell]]
+[[CODE]] aster_shell
 new_project; "<project-name>" language = aster, type = executable.
 [[ENDCODE]]
 
@@ -20,7 +20,7 @@ and you'll be set up with a complete development environment and a minimal
 example for you to begin developing whatever project you have in mind. To
 actually begin development, open the Aster "IDE" environment via
 
-[[CODE:aster_shell]]
+[[CODE]] aster_shell
 open; "<project-name>", type = project.
 [[ENDCODE]]
 
@@ -37,7 +37,7 @@ more verbose code than may have otherwise been written.
 
 Take the following example of a function definition;
 
-[[CODE:aster]]
+[[CODE]] aster
 fn_1: func[pm_1: U8, pm_2: U16] -> U8 =
 {
     // ...
@@ -51,4 +51,4 @@ is a function called fn_1, with two parameters, pm_1 and pm_2, and it returns
 this exact syntax, and how it can be manipulated, in the next chapter.
 
 [[SEEALSO]]
--- [[The Basic Examples]]
+-- [[REF;examples-basic,The Basic Examples]]

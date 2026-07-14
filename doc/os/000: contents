@@ -1,7 +1,7 @@
 [[TITLE]] The Operating Manual
 [[TAGS]] aster os operating system table contents
 [[DESCRIPTION]] The table of contents and overview of the AsterOS Manual.
-[[CONTENTS]]
+
 AsterOS is a non-POSIX operating system, and so many of its internals will
 mystify the average *nix user on first boot. This manual seeks to bridge that
 gap somewhat by providing detailed and technical overviews of the various

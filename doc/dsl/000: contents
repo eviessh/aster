@@ -1,7 +1,7 @@
 [[TITLE]] The DSL Manual
 [[TAGS]] aster dsl language table contents
 [[DESCRIPTION]] The table of contents and overview of the Aster DSL Manual.
-[[CONTENTS]]
+
 The Aster DSL is a very important part of the operating system itself.
 Everything from the kernel to the windowing system is built in it, and learning
 it will do you well if you want to do development on/for Aster. This manual
