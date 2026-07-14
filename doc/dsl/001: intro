@@ -28,3 +28,27 @@ in your terminal. Provided will be completely toggleable syntax highlighting,
 code completion, and a minimal LSP to detect errors, all running in the Jasmine
 text editor. If you want more information specifically about the editor, please
 see the [[REF;jasmine,specialized manual]]. You'll notice it's a lot like Vim.
+
+The Aster DSL is first and foremost designed to be consistent. You'll notice
+that no operator has more than a single usage. That is entirely intentional, you
+are supposed to be able to understand all code on the first read once you
+understand the language's syntax. This can sometimes, however, lead to slightly
+more verbose code than may have otherwise been written.
+
+Take the following example of a function definition;
+
+[[CODE:aster]]
+fn_1: func[pm_1: U8, pm_2: U16] -> U8 =
+{
+    // ...
+}
+[[ENDCODE]]
+
+This syntax may not be immediately understandable to someone with little
+programming experience, but anyone coming from a C-like will get the gist. This
+is a function called fn_1, with two parameters, pm_1 and pm_2, and it returns
+(called a "yield" in Aster DSL terminology) a single U8. We will dive more into
+this exact syntax, and how it can be manipulated, in the next chapter.
+
+[[SEEALSO]]
+-- [[The Basic Examples]]
