@@ -1,6 +1,4 @@
---------------------------------------------------------------------------------
-
-ASTER
+|-ASTER OPERATING SYSTEM DETAILS-------------------------------------JULY 2026-|
 
 Aster is a non-POSIX research operating system written in NASM assembly and a
 specialized domain-specific language named after the operating system itself.
@@ -15,9 +13,7 @@ AI pull requests will not, and will never, be accepted into any part of the
 project. If you use generative AI on your commit, it will be rejected,
 regardless of its percieved quality.
 
---------------------------------------------------------------------------------
-
-LINKS
+|-LINKS -------------------------------------------------------------JULY 2026-|
 
 - Upstream <https://codeberg.org/eviessh/aster>
     This is where the project is located on the web. All tickets, issues, or
@@ -28,4 +24,4 @@ LINKS
     Besides those listed above, no code repositories are official, and as such
     no other code repositories should be trusted.
 
---------------------------------------------------------------------------------
+|------------------------------------------------------------------------------|

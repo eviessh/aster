@@ -47,3 +47,30 @@ identifier when statically analyzing code.
 
 When declaring a variable, the type is specified after the name, preceded by a
 colon. This is similar in syntax to Jai.
+
+[[HEADER]] Expressions
+Just about everything that isn't directly considered a "type" in the DSL is
+considered an "expression"--a statement that directly compiles to some kind of
+instruction(s). This includes things like variable definitions, assignments,
+math, loops, conditionals, and just about everything else you could imagine.
+
+Expressions take the form of two main groups, "compile time" and "run time"
+expressions. Sometimes the lines between these types blur, like in the case of
+math. If math is done purely with compile-time constants or numeric literals,
+then the result will be computed at compile time to save us time during run. But
+you can mark an expression explicitly "compile-time" by enclosing it in a
+"precompiled" block, discuessed later on in this section.
+
+[[SUBHEADER]] Runtime
+Let's discuss runtime expressions first. These are the things one would
+immediately imagine if experienced in programming; variables, function calls,
+conditionals, ecetera.
+
+Firstly, likely the most important runtime expression is the variable
+declaration. A variable declaration is simple syntactically, it includes an
+identifier name, a type, and optionally a value. Note that, if a value is not
+provided, this is an exception to the rule of "runtime expressions cause
+assembly instructions". This will only generate an expression in the compiler
+process itself or the interpreted (compile-time blocks) environment. Once that
+variable is properly assigned to, the expected intructions will be generated as
+normal. A variable definition refers to the 

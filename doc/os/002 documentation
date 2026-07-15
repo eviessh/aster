@@ -91,6 +91,8 @@ A complete list of recognized Asterdoc tags are as follows;
 --| Format: [[B;<text>]]
 -- [[HEADER]] A header marker.
 --| Format: [[HEADER]] <text>
+-- [[SUBHEADER]] A sub-header marker.
+--| Format: [[SUBHEADER]] <text>
 [[ENDLIST]]
 
 Note that, when specifying one of these tags in the source file, it must be

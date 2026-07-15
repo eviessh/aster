@@ -119,12 +119,12 @@ echo "mkdir -p bld"
 # provide an interface to compile the kernel with.
 #-------------------------------------------------------------------------------
 
-mkdir -p 'bld/boot' || exit 1
-echo 'mkdir -p bld/boot'
-nasm -f 'elf64' 'src/boot/compiler.nasm' -o 'bld/boot/compiler.o' || exit 1
-echo 'nasm -f elf64 src/boot/compiler.nasm -o bld/boot/compiler.o'
-ld 'bld/boot/compiler.o' -o 'bld/boot/compiler' || exit 1
-echo 'ld bld/boot/compiler.o -o bld/boot/compiler'
+#mkdir -p 'bld/boot' || exit 1
+#echo 'mkdir -p bld/boot'
+#nasm -f 'elf64' 'src/boot/compiler.nasm' -o 'bld/boot/compiler.o' || exit 1
+#echo 'nasm -f elf64 src/boot/compiler.nasm -o bld/boot/compiler.o'
+#ld 'bld/boot/compiler.o' -o 'bld/boot/compiler' || exit 1
+#echo 'ld bld/boot/compiler.o -o bld/boot/compiler'
 
 rm 'bld/aster.img'
 for file in $nasm_sources; do

@@ -1,0 +1,259 @@
+|-ASTER DSL SPECIFICATION, v1.0--------------------------------------JULY 2026-|
+
+TABLE OF CONTENTS
+
+    1: Preamble
+    2: Definitions
+        2.1: General
+        2.2: Compilation
+        2.3: Syntax
+            2.3.1: Types
+    3: Figures
+        3.1: Format
+    4: Symbols
+    5: Values
+        5.1: Scalar
+        5.2: List
+        5.3: Code
+        5.4: Declaration
+    6: Expressions
+    7: Types
+        7.1: Concrete
+        7.2: Identifier
+        7.3: Alias
+        7.4: Structural
+    8: Variables
+
+1 PREAMBLE
+
+        This document should serve as the absolute authority on the syntax and
+    behavior of the Aster programming language and its compiler(s). Any
+    ambiguity in the specification should be 1. alerted to the maintainers of
+    the DSL, and 2. best-faith interpreted until a fix is available. If you
+    have a question about the specification or language, please open an issue in
+    the Aster project repository (available at time of writing at
+    <https://codeberg.org/eviessh/aster>) or contact the lead maintainer at
+    <eviessh@protonmail.com>.
+
+        This is not meant as a tutorial, instead as an exhaustive technical
+    specification and resource for those wishing to implement a compiler / tool
+    for the language, or interface with it more efficiently. Please see the
+    relevant Aster manual page(s) for proper tutorials on the language's
+    features.
+
+2 DEFINITIONS
+    
+    2.1 GENERAL:
+
+    - DSL: Domain-specific language.
+    - Program: A unit of code compiled or interpreted together to achieve a
+      function or solve a problem.
+    - Standard: An idea or semantic defined by this specification.
+    - Value: A solid definition of some kind of data.
+    - Expression: A piece of code that produces a value.
+
+    2.2 COMPILATION:
+
+    - Compiler: In the context of this specification, a processor used to turn
+      human-readable source code into valid assembly.
+    - Assembler: A program that takes assembly and translates it into machine
+      code.
+    - Linker: A program that takes machine code with unresolved external symbols
+      and resolves their location in the environment.
+
+    2.3 SYNTAX:
+
+    - Symbol: Any string of characters to be used for a defined purpose.
+    - Identifier: Any symbol used to provide readable meaning to an address.
+    - Keyword: A symbol used to communicate a semantic purpose to the processor.
+    - Operator: A symbol used to direct, input-output purpose to the processor.
+    - Variable: Any identifier associated with a piece of data, explicitly for
+      the purpose of manipulation in some way.
+    - Constant: Any identifier associated with a piece of data that will never
+      be changed during the program's runtime.
+    - Function: A set of code defined separate to its direct usage environment
+      used for a single, specific purpose.
+    - Conditional: A potential fork in program execution spurred by a situation
+      in the environment.
+    - Loop: A piece of code to be potentially executed more than once directly
+      sequentially.
+
+        2.3.1 TYPES
+
+        - Type: Any identifier associated with a tag for data meant to give
+          context to the processor.
+        - Concrete: Any type that specifically decides the count or pattern of
+          bits present in a piece of data.
+        - Alias: Any type that directly aliases another type with no directly
+          added functionality.
+        - Structural: Any type that defines symbolic names for values or offsets
+          associated with important portions of the affected data.
+
+3 FIGURES
+
+        The figures contained within this document should be considered to be in
+    the following format of expression. Any errors should be reported to
+    language standard maintainers.
+
+    3.1 FORMAT:
+
+        For a format figure, like those for function or variable declarations,
+    the following format should be assumed.
+
+    - The enclosing delimiter "<" shall be used to make known that a portion of
+      the format is required.
+    - The enclosing delimiter "{" shall be used to make known that a portion of
+      the format is optional.
+    - The enclosing delimiter '"' shall be used to make known that a string
+      shall be taken literally.
+    - The use of the string "identifier" shall be used to make known that this
+      portion of the format can be any string usable as an identifier (S 2.3
+      "Identifier").
+    - The use of the string "type" shall be used to make known that this portion
+      of the format must be a valid type identifier.
+    - The use of the string "// ..." shall be used to denote code not shown for
+      the purpose of brevity or generalization.
+    - The use of the string "{...}" shall be used to make known that the
+      previous portion of the format continues indefinitely, or until another
+      portion explicitly begins.
+    - The use of the characters ",", ".", ":", ";", "(", ")", "[", "]", and "="
+      shall be used to denote themselves literally.
+    - The use of a space or newline character shall be used to denote any
+      white-space character, though they may sometimes be intentional to denote
+      best practices, and should be taken as required unless enclosed on one
+      side by an operator.
+
+    Any other string should be taken to be explanatory.
+
+4 SYMBOLS
+
+        A symbol may be defined using any mix of alphanumeric character save for
+    contiguous strings that may constitute a reserved operator. This has the
+    additional caveat of the fact that the symbol may not be entirely numeric,
+    as it would then be considered a numeric scalar by a processor.
+
+        An Aster DSL program may not define a symbol that would alias any
+    standard keyword or operator, or any identifier otherwise explicitly
+    declared reserved by this standard. It MAY define an alias for standard
+    library functions, types, or variables, as long as they do not include the
+    relevant standard library portion in that translation unit. If an invalid
+    symbol is consumed by the processor, it must refuse to compile that section
+    of code until the issue is resolved.
+
+        No symbol may be defined "reserved" by the compiler beyond those defined
+    in this standard to be specifically reserved. The presence of non-standard
+    reserved keywords is indicative of a non-standard compliant compiler, and
+    the output of said compiler should not be considered guaranteed correct by
+    the Aster DSL organization.
+
+5 VALUES
+
+        There are several types of "values" defined in this specification. Each
+    is used in a wildly different situation, but all remain "values" (S 2.1
+    "Value").
+
+    5.1 SCALAR
+
+        A scalar value is defined as a number or symbol of some kind. This can
+    include references to variables or functions, integers (hexadecimal or
+    decimal), fractional numbers (which must be in decimal format), binary
+    literals, or characters.
+
+        In order to write a hexadecimal literal, prefix a string made up of the
+    characters 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, A, B, C, D, E, or F with the string
+    "0x". For a fractional literal, prefix a string made up of the characters 0,
+    1, 2, 3, 4, 5, 6, 7, 8, 9, or '.' with "0f". Note that a fractional literal
+    may only have on '.' character to signify the decimal point. For a binary
+    literal, prefix a string made up of the characters 0 and 1 with "0b".
+
+        The bit width of scalar literals will be decided as the smallest amount
+    of bits that could represent the specified number, for example for 0xF it
+    would be 4, for 0b10 2, and for 0f23.2 16.
+
+    5.2 LIST
+
+        A list value is defined as a comma-separated list of symbols.
+
+    5.3 CODE
+
+        A code value is defined as a block of executable code. This code block
+    can contain its own variables, in which case it will be allocated its own
+    stack frame. It may also contain other code blocks.
+
+    5.4 DECLARATION
+
+        A declaration value is defined as a block of variable declarations of
+    some kind. These declarations may optionally have definitions, whose
+    semantic meaning will be decided by the scope the list operates within.
+
+5 EXPRESSIONS
+
+        Expressions are the base unit of functionality in the DSL. Each
+    expression will plainly either produce a value or produce some kind of
+    output, be it in terms of program state or outside state somehow. Each
+    expression in the DSL must be delimited by a '.' character non-optionally.
+
+7 TYPES
+
+        There are three defined classes of type in this specification,
+    "concrete" (S 2.3.1, "Concrete"), "identifier" (S 2.3 "Identifier"), "alias"
+    (S 2.3.1, "Alias"), and "structural" (S 2.3.1, "Structural").
+
+    7.1 CONCRETE
+
+        There is only one concrete type defined in this specification, the
+    "bit". A bit represents exactly one machine bit, and is intended to be used
+    in an array form to build more complex types.
+
+        Defining a concrete-typed variable requires the usage of a scalar value,
+    whatever that may look like.
+
+    7.2 IDENTIFIER
+
+        There is only one identifier type defined in this specification, the
+    "function" (S 2.3, "Function"). A function type should be defined in the
+    following manner;
+
+        <"func"> {<(argument, {{...}}, {"..."})>} {[<specialization>], {...}}
+
+        Defining an identifier-typed variable requires the usage of a code-type
+    block value.
+
+    7.3 ALIAS
+
+        There is only one alias type defined in this specification, the "alias".
+    This type is to be used for any type, given that type is specified in its
+    specialization block. An alias type is defined in the following manner;
+
+        <"alias"(<type>)>
+
+        Defining an alias-typed variable is not allowed nor possible, as they
+    are meant to be type definitions only.
+
+    7.4 STRUCTURAL
+
+        There are four structural types defined in this specification, the
+    "structure", the "union", the "bitmask", or the "flagset". Each structural
+    type's definition protocol is listed below;
+
+        Structure: <"struct"> {[<specialization>]}
+        Union:     <"union"> {[<specialization>]}
+        Bitmask:   <"bitmask"> {[<specialization>]}
+        Flagset:   <"flags"> {[<specialization>]}
+
+        To define a structure or union type, one must provide a declaration-type
+    block value, and to define a bitmask or flagset, one must provide a
+    list-type block value.
+
+8 VARIABLES
+
+        Variables are defined by this standard to be "any identifier associated
+    with a piece of data, explicitly for the purpose of manipulation in some
+    way". A variable definition must be formatted in the following manner;
+
+        <identifier:> <type> {= //...}
+
+        A variable can be declared to conform to any defined type. Its value
+    must exactly match the specification of that type.
+
+|------------------------------------------------------------------------------|

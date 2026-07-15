@@ -1,6 +1,4 @@
---------------------------------------------------------------------------------
-
-INSTALL
+|-ASTER OPERATING SYSTEM INSTALLATION--------------------------------JULY 2026-|
 
 To compile the operating system, run the <build.sh> script in the <etc>
 directory. A disk image will be produced that can be used via all the normal
@@ -10,9 +8,7 @@ compile on your system, open a ticket upstream in the code repository.
 To see possible build arguments, use the "-h" switch when running the build
 script.
 
---------------------------------------------------------------------------------
-
-DEPENDENCIES
+|-ASTER OPERATING SYSTEM DEPENDENCIES--------------------------------JULY 2026-|
 
 Aster requires quite a few things to be bootable on your hardware (and may still
 fail if all these conditions are met);
@@ -36,4 +32,4 @@ NOTE: Aster is experimental! While at a very small chance, it may damage your
 system on boot attempt. Into the forseeable future, booting in a virtual machine
 is always the reccommended approach.
 
---------------------------------------------------------------------------------
+|------------------------------------------------------------------------------|
