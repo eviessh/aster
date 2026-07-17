@@ -1,7 +1,7 @@
 import; basic, io.
 
-path: const BOOL = false.
+path: BOOL = false.
 
-if[path ?.] = io-print "True path!".
-else        = io-print "False path!".
+if path ?. = io-print "True path!".
+else       = io-print "False path!".
 

@@ -2,7 +2,7 @@ import; basic, io.
 
 takeNothing: func =
 {
-    io-print("This is a function with no parameters.").
+    io-print "This is a function with no parameters.".
 }.
 
 yieldNothing: func[string: U8#] =

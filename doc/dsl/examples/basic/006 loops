@@ -1,21 +1,21 @@
 import; basic, io.
 
-noYield: loop[i: U8 = 0] =
+noYield: loop[i: mutable U8 = 0] =
 {
     io-printU8 i.
     io-print "\n".
 
     i++.
-    if[i ?>= 100] = yield.
+    if i >= 100 = yield.
 }
 
-a: loop[i: U8 = 0] -> U8 =
+a: loop[i: mutable U8 = 0] -> U8 =
 {
     io-printU8 i.
     io-print "\n".
 
     i++.
-    if[i ?>= 100] = yield i.
+    if i >= 100 = yield i.
 }
 io-printU8 a.
 

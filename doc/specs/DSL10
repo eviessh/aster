@@ -14,13 +14,22 @@
     5.2 LIST
     5.3 CODE
     5.4 DECLARATION
+    5.5 DEFINITION
 6 EXPRESSIONS
-7 TYPES
-    7.1 CONCRETE
-    7.2 IDENTIFIER
-    7.3 ALIAS
-    7.4 STRUCTURAL
-8 VARIABLES
+7 KEYWORDS
+8 OPERATORS
+    8.1 LOGICAL
+    8.2 ARITHMETIC
+    8.3 ASSIGNMENT
+    8.4 BEHAVIORAL
+9 TYPES
+    9.1 CONCRETE
+    9.2 IDENTIFIER
+    9.3 ALIAS
+    9.4 STRUCTURAL
+10 VARIABLES
+11 SPECIALIZATIONS
+12 ABI
 
 |-1 PREAMBLE---------------------------------------------------------JULY 2026-|
 
@@ -105,6 +114,8 @@ following format should be assumed;
   "Identifier").
 - The use of the string "type" shall be used to make known that this portion of
   the format must be a valid type identifier.
+- The use of the string "number" shall be used to make known that this portion
+  of the format must be a valid numerical literal.
 - The use of the string "// ..." shall be used to denote code not shown for the
   purpose of brevity or generalization.
 - The use of the string "{...}" shall be used to make known that the previous
@@ -164,7 +175,9 @@ bits that could represent the specified number, for example for 0xF it would be
 
 5.2 LIST
 
-    A list value is defined as a comma-separated list of symbols.
+    A list value is defined as a comma-separated list of symbols. If
+a list contains more than one item, its values must be preceded by a single
+semicolon (";") character.
 
 5.3 CODE
 
@@ -176,7 +189,15 @@ frame. It may also contain other code blocks.
 
     A declaration value is defined as a block of variable declarations of some
 kind. These declarations may optionally have definitions, whose semantic meaning
-will be decided by the scope the list operates within.
+will be decided by the scope the list operates within. A declaration value must
+be contained by brackets ("]").
+
+5.5 DEFINITION
+
+    A definition block is what follows a declaration block, and will provide
+values for the variables defined in the preceding declaration block. A
+definition block is enclosed in a bracket-brace combination ("[{") to symbolize
+its status as a halfway point between declaration and code.
 
 |-6 EXPRESSIONS------------------------------------------------------JULY 2026-|
 
@@ -185,13 +206,181 @@ will plainly either produce a value or produce some kind of output, be it in
 terms of program state or outside state somehow. Each expression in the DSL must
 be delimited by a '.' character non-optionally.
 
-|-7 TYPES------------------------------------------------------------JULY 2026-|
+|-7 KEYWORDS---------------------------------------------------------JULY 2026-|
+
+    Each keyword specified in this section is considered reserved, and code
+defining identifiers with the same value shall be considered incorrect and
+unable to be compiled. Note that a keyword may be considered "reserved" but not
+"valuable" if its implementation specifics are still being discussed by the
+standards body, until a single, defined purpose is reached, a keyword shall be
+unable to be defined nor used in a program.
+
+    It should be noted as well that these keywords are not necessarily the only
+reserved symbols in a DSL program, others (like type specifiers) may or may not
+also be reserved, see the relevant sections of the DSL specification for
+confirmation.
+
+    The list of all valid keywords alongside their intended purpose and exact
+format specification is as follows;
+
+- "if": The defining keyword of a conditional block. The block to be executed
+  when the condition is truthy can optionally not be enclosed in braces if it is
+  only one expression long.
+  Format: <"if" boolean-expression => {"{"} <// ...> {"}"}
+- "elif": The defining keyword of a secondary conditional block, to be executed
+  if the preceding conditional is falsey. The block to be executed when the
+  condtion is truthy can optionally not be enclosed in braces if it is only one
+  expression long.
+  Format: <"elif" boolean-expression => {"{"} <// ...> {"}"}
+- "else": The defining keyword of a final conditional block, executed if ALL
+  preceding conditionals are falsey. There may not be another conditional of the
+  same chain after an else. The block to be executed when the condtion is truthy
+  can optionally not be enclosed in braces if it is only one expression long.
+  Format: <"else" => {"{"} <// ...> {"}"}
+- "loop": The defining keyword of a loop block, which will continually execute
+  until a terminating statement is reached. It may optionally contain an
+  argument list, which can define loop-scoped variables.
+  Format: <"loop">{[definitions]} <= "{" // ... "}">
+- "yield": The current scope should yield the following value(s) (S 12.2) to the
+  last scope. If in the global scope, the value(s) shall be yielded to the
+  calling scope.
+  Format: <"yield" identifier/number>
+- "import": The defining keyword of an import block, which will pull in another
+  module of DSL code to be used in the current translation unit. The imported
+  modules should be defined as a list value.
+  Format: <"import" import-list>
+- "precompiled": The defining keyword of a precompiled block, which will be
+  interpreted and its results output before the program itself executes. The
+  block to be interpreted can optionally not be enclosed in braces if it is only
+  one expression long.
+  Format: <"precompiled" => {"{" <// ...> "}"}
+- "mutable": A storage specifier that defines that the identifier the attached
+  type defines should be considered mutable. If before a pointer specifier, the
+  pointer itself is mutable. If after, the object addressed is.
+  Format: <"mutable" type{"#"}> {"mutable"}
+
+|-8 OPERATORS--------------------------------------------------------JULY 2026-|
+
+    Each operator in this section is considered reserved, and may not be defined
+in any DSL program. Any program redefining these symbols is to be considered
+incorrect.
+
+    The list of all valid operator alongside their intended purpose and exact
+format specification is as follows;
+
+8.1 LOGICAL
+
+- "?=": Equal to.
+  Format: <expression "?=" expression>
+- "!=": Not equal to.
+  Format: <expression "?!" expression>
+- "?.": Logically truthy. Equivalent to ?= 1.
+  Format: <expression "?.">
+- "?!": Logically falsey. Equivalent to ?! 1.
+  Format: <expression "?!">
+- ">": Greater than.
+  Format: <expression ">" expression>
+- "<": Less than.
+  Format: <expression "<" expression>
+- ">=": Greater than or equal to.
+  Format: <expression ">=" expression>
+- "<=": Less than or equal to.
+  Format: <expression "<=" expression>
+- "&&": Logical AND. Both expressions must be truthy for overall truthiness.
+  Format: <expression "&&" expression>
+- "||": Logical OR. One or more expressions must be truthy for overall
+  truthiness.
+  Format: <expression "||" expression>
+
+8.2 ARITHMETIC
+
+    All arithmetic operators can be chained with an assignment operator to form
+an arithmetic assignment, where the value on the right of the expression will be
+calculated into the current value of the left value.
+
+- "+": Addition.
+  Format: <identifier/number "+" identifier/number>
+- "-": Subtraction. 
+  Format: <identifier/number "-" identifier/number>
+- "*": Multiplication.
+  Format: <identifier/number "*" identifier/number>
+- "/": Division.
+  Format: <identifier/number "/" identifier/number>
+- "%": Modulus.
+  Format: <identifier/number "%" identifier/number>
+- "&": Bitwise AND.
+  Format: <identifier/number "&" identifier/number>
+- "|": Bitwise OR.
+  Format: <identifier/number "|" identifier/number>
+- "^": Bitwise XOR.
+  Format: <identifier/number "^" identifier/number>
+- "~": Bitwise NOT.
+  Format: <"~"identifier/number>
+
+8.3 ASSIGNMENT
+
+- "=": Nonconditional assignment.
+  Format: <identifier "=" identifier/number>
+- ":=": Non-defined assignment.
+  Format: <identifier ":=" identifier/number>
+
+8.4 BEHAVIORAL
+
+- "(", ")": Expressional subdivision capture. The contained expression will be
+  evaluated before those outside the subdivision.
+  Format: <(expression)>
+- "[", "]": Declaration list subdivision capture. The contained expression will
+  be treated as a declaration list (S 5.4).
+  Format: <[ // ... ]>
+- "{", "}": Code block subdivision capture. The contained expression will be
+  treated as a code block (S 5.3).
+  Format: <"{" // ... "}">
+- "[{", "}]": Definition list subdivision capture. The contained expression will
+  be treated as a definition list (S 5.5).
+  Format: <["{" // ... "}"]>
+- "<", ">": Specification subdivision capture. The contained expression will be
+  treated as a specification (S 11).
+  Format: <"<"attribute">">
+- "'", "'": Character literal capture. The contained expression will be treated
+  as a character literal (S 5.1).
+  Format: <"'"literal"'">
+- '"', '"': String literal capture. The contained expression will be treated as
+  an array of character literals terminated with a 0.
+  Format: <'"'literal'"'>
+- "#": Pointer tag. The type it's attached to will be converted into a pointer.
+  Format: <type"#">
+- "$": Dereference. The identifier it's attached to must be a pointer, and will
+  be dereferenced to its stored address.
+  Format: <"$"identifier>
+- "@": Length tag. The type it's attached to will be repeated to the length
+  specificed on the other side of the operator.
+  Format: <type"@"number>
+- ":": Type specifier. The preceding identifier will be treated as if it is of
+  the type after the specifier. If in an assignment expression, the type
+  treatment will be permanently the default for this identifier.
+  Format: <identifier":" type>
+- "->": Yield specifier. The context-defined preceding item (loop, precompiled
+  block, etc.) will yield the type succeeding the operator.
+  Format: <type/keyword "->" type>
+- ";": List beginning. If a list is more than a single item, this operator must
+  be used to signify its beginning.
+  Format: <identifier";" item"," item {{...}}>
+- ",": List item separator.
+  Format: <item"," item>
+- ".": Expression termination.
+  Format: <expression".">
+
+|-9 TYPES------------------------------------------------------------JULY 2026-|
 
     There are three defined classes of type in this specification, "concrete" (S
 2.3.1, "Concrete"), "identifier" (S 2.3 "Identifier"), "alias" (S 2.3.1,
 "Alias"), and "structural" (S 2.3.1, "Structural").
 
-7.1 CONCRETE
+    Note that the preceding "type specifier" (the word to denote that a given
+identifier defines a type of a certain format) are to be considered reserved,
+and cannot be redefined by a DSL program.
+
+9.1 CONCRETE
 
     There is only one concrete type defined in this specification, the "bit". A
 bit represents exactly one machine bit, and is intended to be used in an array
@@ -200,29 +389,29 @@ form to build more complex types.
     Defining a concrete-typed variable requires the usage of a scalar value,
 whatever that may look like.
 
-7.2 IDENTIFIER
+9.2 IDENTIFIER
 
     There is only one identifier type defined in this specification, the
 "function" (S 2.3, "Function"). A function type should be defined in the
 following manner;
 
-    <"func"> {<(argument, {{...}}, {"..."})>} {[<specialization>], {...}}
+    <"func"> {<[argument, {{...}}, {"..."}]>} {"<"<specialization>">", {...}}
 
     Defining an identifier-typed variable requires the usage of a code-type
 block value.
 
-7.3 ALIAS
+9.3 ALIAS
 
     There is only one alias type defined in this specification, the "alias".
 This type is to be used for any type, given that type is specified in its
 specialization block. An alias type is defined in the following manner;
 
-    <"alias"(<type>)>
+    <"alias"[<type>]>
 
     Defining an alias-typed variable is not allowed nor possible, as they are
 meant to be type definitions only.
 
-7.4 STRUCTURAL
+9.4 STRUCTURAL
 
     There are four structural types defined in this specification, the
 "structure", the "union", the "bitmask", or the "flagset". Each structural
@@ -237,7 +426,7 @@ type's definition protocol is listed below;
 block value, and to define a bitmask or flagset, one must provide a list-type
 block value.
 
-|-8 VARIABLES--------------------------------------------------------JULY 2026-|
+|-10 VARIABLES-------------------------------------------------------JULY 2026-|
 
     Variables are defined by this standard to be "any identifier associated with
 a piece of data, explicitly for the purpose of manipulation in some way". A
@@ -247,5 +436,9 @@ variable definition must be formatted in the following manner;
 
     A variable can be declared to conform to any defined type. Its value must
 exactly match the specification of that type.
+
+|-11 SPECIALIZATIONS-------------------------------------------------JULY 2026-|
+
+|-12 ABI-------------------------------------------------------------JULY 2026-|
 
 |------------------------------------------------------------------------------|

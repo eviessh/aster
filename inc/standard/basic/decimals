@@ -1,8 +1,8 @@
-[global_namespace]
+<global_namespace>
 
-F32:  alias(bit@32)  [decimal:floating].
-F64:  alias(bit@64)  [decimal:floating].
-F128: alias(bit@128) [decimal:floating].
+F32:  alias[bit@32]  <decimal:floating>.
+F64:  alias[bit@64]  <decimal:floating>.
+F128: alias[bit@128] <decimal:floating>.
 
-D64:  alias(bit@64)  [decimal:fixed].
-D128: alias(bit@128) [decimal:fixed].
+D64:  alias[bit@64]  <decimal:fixed>.
+D128: alias[bit@128] <decimal:fixed>.

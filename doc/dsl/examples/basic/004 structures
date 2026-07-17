@@ -1,17 +1,17 @@
 import; basic, io.
 
 TEST_STRUCT: struct
-{
+[
     u8Parameter: U8.
     f16Parameter: F16 = 12.3.
     u64Parameter: U64.
-}.
+].
 
 structureTest: struct TEST_STRUCT =
-{
+[
     u8Parameter = 32,
     u64Parameter = 3921
-}.
+].
 
 io-printU8 structureTest-u8Parameter.
 io-printF16 structureTest-f16Parameter.

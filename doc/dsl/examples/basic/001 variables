@@ -1,12 +1,12 @@
 import; basic, io.
 
-x: const U8 = 23.
-y: const U16 = 3445.
-z: const U64 = x * y.
+x: U8 = 23.
+y: U16 = 3445.
+z: U64 = x * y.
 
-f1: const F16 = 0.34.
-f2: const F32 = 0.45575.
-f3: const F64 = x:F64 * y + f1.
+f1: F16 = 0.34.
+f2: F32 = 0.45575.
+f3: F64 = x:F64 * y + f1.
 
 io-printU16 y.
 io-printF64 f3.

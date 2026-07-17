@@ -1,10 +1,12 @@
-[global_namespace]
+<global_namespace>
 
-BOOL_FLAGS: flags(bit@1) [global_flags] [no_export]
+BOOL_FLAGS: flags[bit@1] <global_flags> <no_export>
 {
     false,
     true
 }.
-BOOL: alias(flags BOOL_FLAGS).
+BOOL: alias[flags BOOL_FLAGS].
 
-nil: const BOOL [implicitly_cast] = false.
+// You can cast nil to any value without worrying about explicitly transforming
+// it. A little bit of syntax sugar, just for you. ;)
+nil: const BOOL <implicitly_cast> = false.
