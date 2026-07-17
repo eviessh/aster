@@ -218,8 +218,13 @@ be delimited by a '.' character non-optionally.
     A function call is functionally the same as a jump with some added
 parameters being moved into registers and the allocation of a new stack frame. A
 function call is achieved by writing the name of a function identifier and then
-a list afterwords for its parameters, or nothing if no parameters are needed. If
-the function returns a value, this expression may be used to assign to a
+a list afterwords for its parameters, or nothing if no parameters are needed.
+This syntax is inconsistent with the other ways of defining the members of a
+declaration list, but a function is a special case where you are only temporary
+passing the values through the gateway of the list, not defining the list
+itself, and so the inconsistency is purposeful to differentiate the situations.
+
+    If the function returns a value, this expression may be used to assign to a
 variable. If a function has optional parameters, use their names followed by an
 unconditional assignment operator to assign to them.
 
