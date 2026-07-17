@@ -34,6 +34,8 @@
     11.3 FUNCTIONS
     11.4 TYPES
 12 ABI
+    12.1 PARAMETERS
+    12.2 IDENTIFIERS
 
 |-1 PREAMBLE---------------------------------------------------------JULY 2026-|
 
@@ -472,6 +474,8 @@ zone it appears in.
 11.3 FUNCTIONS
 
 - "private": The function shall not be available outside the module.
+- "no_frame": The function shall not be given its own stack frame, instead using
+  the one from the calling context.
 
 11.4 TYPES
 
@@ -489,5 +493,42 @@ zone it appears in.
   number. It must be 32, 64, or 128 bits long.
 
 |-12 ABI-------------------------------------------------------------JULY 2026-|
+
+    The ABI of the DSL is only designed to be used on x86_64 CPUs in Long Mode.
+Its format is defined below.
+
+12.1 PARAMETERS
+
+    All types resolved to "numerical" types (integers, decimals, pointers, etc.)
+will be passed by value. Anything else (arrays, functions, structures) will be
+passed by reference. If a function has too many arguments to all fit in
+registers (more than 14), the extras will be pushed to the function's stack
+frame. In order, arguments go in the following registers;
+
+1. RAX
+2. RBX
+3. RCX
+4. RDX
+5. RSI
+6. RDI
+7. R8
+8. R9
+9. R10
+10. R11
+11. R12
+12. R13
+13. R14
+14. R15
+
+    Return values will be stored in RAX on function return, and every other
+register will be preserved. A function's stack frame, unless otherwise stated in
+code, will be immediately trashed.
+
+12.2 IDENTIFIERS
+
+    Identifiers will be compiled in the following format when processed into a
+binary format;
+
+    <namespace"_">{...}<identifier>
 
 |------------------------------------------------------------------------------|
