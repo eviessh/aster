@@ -29,6 +29,10 @@
     9.4 STRUCTURAL
 10 VARIABLES
 11 SPECIALIZATIONS
+    11.1 MODULES
+    11.2 VARIABLES
+    11.3 FUNCTIONS
+    11.4 TYPES
 12 ABI
 
 |-1 PREAMBLE---------------------------------------------------------JULY 2026-|
@@ -367,6 +371,9 @@ calculated into the current value of the left value.
   Format: <identifier";" item"," item {{...}}>
 - ",": List item separator.
   Format: <item"," item>
+- "-": Scope constriction. To access a member of a structure, type, or
+  namespace, this operator should be used.
+  Format: <scope"-"member>
 - ".": Expression termination.
   Format: <expression".">
 
@@ -395,7 +402,7 @@ whatever that may look like.
 "function" (S 2.3, "Function"). A function type should be defined in the
 following manner;
 
-    <"func"> {<[argument, {{...}}, {"..."}]>} {"<"<specialization>">", {...}}
+    <"func"> {<[argument, {{...}}, {"..."}]>} {"<"<specialization>">" {...}}
 
     Defining an identifier-typed variable requires the usage of a code-type
 block value.
@@ -406,7 +413,7 @@ block value.
 This type is to be used for any type, given that type is specified in its
 specialization block. An alias type is defined in the following manner;
 
-    <"alias"[<type>]>
+    <"alias" type> {"<"specialization">" {...}}
 
     Defining an alias-typed variable is not allowed nor possible, as they are
 meant to be type definitions only.
@@ -417,14 +424,14 @@ meant to be type definitions only.
 "structure", the "union", the "bitmask", or the "flagset". Each structural
 type's definition protocol is listed below;
 
-    Structure: <"struct"> {[<specialization>]}
-    Union:     <"union"> {[<specialization>]}
-    Bitmask:   <"bitmask"> {[<specialization>]}
-    Flagset:   <"flags"> {[<specialization>]}
+    Structure: <"struct"> {"<"specialization">" {...}}
+    Union:     <"union"> {"<"specialization">" {...}}
+    Bitmask:   <"bitmask"> {underlying "<"specialization">" {...}}
+    Flagset:   <"flags"> {underlying "<"specialization">" {...}}
 
     To define a structure or union type, one must provide a declaration-type
 block value, and to define a bitmask or flagset, one must provide a list-type
-block value.
+value.
 
 |-10 VARIABLES-------------------------------------------------------JULY 2026-|
 
@@ -432,12 +439,54 @@ block value.
 a piece of data, explicitly for the purpose of manipulation in some way". A
 variable definition must be formatted in the following manner;
 
-    <identifier:> <type> {= //...}
+    <identifier: type> {"<"specialization">" {...} = //...}
 
     A variable can be declared to conform to any defined type. Its value must
 exactly match the specification of that type.
 
 |-11 SPECIALIZATIONS-------------------------------------------------JULY 2026-|
+
+    Specializations are a core part of configuring the exact compiler behavior
+when dealing with certain things like functions, variables, types, and more.
+Specializations are not reserved, as they can only ever appear within the
+specialization subdivision operators (S 8.4). However, they are defined by the
+specification and only the specification. User-defined or vendor-defined
+specifications are not allowed. If a specification is desired by the community,
+a vote shall be cast to decide whether or not it becomes added to the language.
+
+    Listed below is each standard specialization categorized by the semantic
+zone it appears in.
+
+11.1 MODULES
+
+- "global_namespace": The symbols defined in this file are not to be put into
+  the module's namespace, instead into the global namespace.
+
+11.2 VARIABLES
+
+- "implicitly_cast": The variable shall be implicitly cast to whatever type it
+  needs to be in the scenario. Note that this can become dangerous, and should
+  never be assigned unless explictly required.
+- "private": The variable shall not be available outside the module.
+
+11.3 FUNCTIONS
+
+- "private": The function shall not be available outside the module.
+
+11.4 TYPES
+
+- "private": The type shall not be available outside the module.
+- "global_flags": The flags of this enumerator type (no other type is valid)
+  shall be available without specifying the type as a namespace first in EVERY
+  scenario, not just the standard ones.
+- "unsigned": The defined type shall not be taken to have a sign bit.
+- "tagged": The defined union type (no other type is valid) shall be given an
+  implicit enumerator member named "tag" which shall possibly have the names of
+  all other members as values.
+- "decimal:floating": The defined type shall be taken as an IEEE 754
+  floating-point number. It must be 16, 32, 64, 128, or 256 bits long.
+- "decimal:fixed": The defined type shall be taken as an IEEE 754 fixed-point
+  number. It must be 32, 64, or 128 bits long.
 
 |-12 ABI-------------------------------------------------------------JULY 2026-|
 
