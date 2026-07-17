@@ -17,6 +17,7 @@
     5.5 DEFINITION
 6 EXPRESSIONS
     6.1 CALLS
+    6.2 COMMENTS
 7 KEYWORDS
 8 OPERATORS
     8.1 LOGICAL
@@ -28,6 +29,7 @@
     9.2 IDENTIFIER
     9.3 ALIAS
     9.4 STRUCTURAL
+    9.5 BEHAVIORAL
 10 VARIABLES
 11 SPECIALIZATIONS
     11.1 MODULES
@@ -228,6 +230,12 @@ itself, and so the inconsistency is purposeful to differentiate the situations.
 variable. If a function has optional parameters, use their names followed by an
 unconditional assignment operator to assign to them.
 
+6.2 COMMENTS
+
+    Comments are simply lines ignored by compilers while turning the source code
+into an executable binary. Comments begin with a double forward slash ("//") and
+continue until a newline is reached.
+
 |-7 KEYWORDS---------------------------------------------------------JULY 2026-|
 
     Each keyword specified in this section is considered reserved, and code
@@ -259,10 +267,6 @@ format specification is as follows;
   same chain after an else. The block to be executed when the condtion is truthy
   can optionally not be enclosed in braces if it is only one expression long.
   Format: <"else" => {"{"} <// ...> {"}"}
-- "loop": The defining keyword of a loop block, which will continually execute
-  until a terminating statement is reached. It may optionally contain an
-  argument list, which can define loop-scoped variables.
-  Format: <"loop">{[definitions]} <= "{" // ... "}">
 - "yield": The current scope should yield the following value(s) (S 12.2) to the
   last scope. If in the global scope, the value(s) shall be yielded to the
   calling scope.
@@ -271,11 +275,6 @@ format specification is as follows;
   module of DSL code to be used in the current translation unit. The imported
   modules should be defined as a list value.
   Format: <"import" import-list>
-- "precompiled": The defining keyword of a precompiled block, which will be
-  interpreted and its results output before the program itself executes. The
-  block to be interpreted can optionally not be enclosed in braces if it is only
-  one expression long.
-  Format: <"precompiled" => {"{" <// ...> "}"}
 - "mutable": A storage specifier that defines that the identifier the attached
   type defines should be considered mutable. If before a pointer specifier, the
   pointer itself is mutable. If after, the object addressed is.
@@ -454,6 +453,21 @@ type's definition protocol is listed below;
     To define a structure or union type, one must provide a declaration-type
 block value, and to define a bitmask or flagset, one must provide a list-type
 value.
+
+9.5 BEHAVIORAL
+
+    Behavioral types are those which are used to customize the program's
+behavior for a while. There are two defined in this specification; "loop" and
+"precompiled". A loop is defined with a code block value, and will loop forever
+until terminated with a yield statement. A precompiled block is interpreted
+before the program runs, and its results inserted into where it appears in the
+source. All behavioral types may yield a value, and none create their own stack
+frames.
+
+    You can define the behavior types as follows;
+
+    Loop:        <"loop">{[loop-variable{"," {...}}]}
+    Precompiled: <"precompiled">
 
 |-10 VARIABLES-------------------------------------------------------JULY 2026-|
 
