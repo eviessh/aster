@@ -1,7 +1,7 @@
 |-ASTER OPERATING SYSTEM DETAILS-------------------------------------JULY 2026-|
 
-Aster is a non-POSIX research operating system written in NASM assembly and a
-specialized domain-specific language named after the operating system itself.
+    Aster is a non-POSIX research operating system written in NASM assembly and
+a specialized domain-specific language named after the operating system itself.
 That language's compiler is built into the kernel itself, and IDE-type tools
 available to make the programming experience better. Aster is meant to be a
 tightly-knit environment, and so all applications share similar interface
@@ -9,19 +9,21 @@ patterns, directory hierarchies, and paradigms. Aster should not be used as a
 daily driver, instead as a fun experiment to see what computing can be like in a
 non-POSIX/non-MS environment.
 
-AI pull requests will not, and will never, be accepted into any part of the
+    AI pull requests will not, and will never, be accepted into any part of the
 project. If you use generative AI on your commit, it will be rejected,
 regardless of its percieved quality.
 
-|-LINKS -------------------------------------------------------------JULY 2026-|
+|-LINKS--------------------------------------------------------------JULY 2026-|
 
 - Upstream <https://codeberg.org/eviessh/aster>
-    This is where the project is located on the web. All tickets, issues, or
+        This is where the project is located on the web. All tickets, issues, or
     queries should be directed there. There are several read-only mirrors of the
     project, all of which are listed below;
+
     - GitHub Mirror <https://github.com/eviessh/aster>
     - GitLab Mirror <https://gitlab.com/eviessh/aster>
-    Besides those listed above, no code repositories are official, and as such
-    no other code repositories should be trusted.
+
+        Besides those listed above, no code repositories are official, and as
+    such no other code repositories should be trusted.
 
 |------------------------------------------------------------------------------|

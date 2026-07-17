@@ -1,17 +1,31 @@
 |-ASTER OPERATING SYSTEM INSTALLATION--------------------------------JULY 2026-|
 
-To compile the operating system, run the <build.sh> script in the <etc>
-directory. A disk image will be produced that can be used via all the normal
-manners of installing an operating system to hardware or a VM. If it doesn't
-compile on your system, open a ticket upstream in the code repository.
+    To compile the operating system, run the <build.sh> script in the <etc>
+directory with the "-b" argument. If the script fails, you likely are missing a
+dependency. Please see the BUILD SYSTEM DEPENDENCIES section below. A disk image
+will be produced that can be used via all the normal manners of installing an
+operating system to hardware or a VM. If it doesn't compile on your system, open
+a ticket upstream in the code repository.
 
-To see possible build arguments, use the "-h" switch when running the build
-script.
+    To see all possible build arguments, use the "-h" switch when running the
+build script.
+
+|-ASTER BUILD SYSTEM DEPENDENCIES------------------------------------JULY 2026-|
+
+    The build system does require some external tools to be present on your
+system, and you should ensure you have the required tools before you run the
+script, lest you waste time.
+
+- POSIX sh: A POSIX-compatible shell is required to run the build script itself.
+  More featureful shells like Bash or Dash SHOULD work, but are not guaranteed
+  and will not be compromised for if it derails the script somehow.
+- NASM: A NASM-compatible assembler is required to compile things like the
+  bootloader and bootstrap DSL compiler.
 
 |-ASTER OPERATING SYSTEM DEPENDENCIES--------------------------------JULY 2026-|
 
-Aster requires quite a few things to be bootable on your hardware (and may still
-fail if all these conditions are met);
+    Aster requires quite a few things to be bootable on your hardware (and may
+still fail if all these conditions are met);
 
 - ALL MODES
   - An x86_64 processor. This may also be referred to as AMD64.
@@ -28,8 +42,8 @@ fail if all these conditions are met);
 - UEFI MODE
   - Not supported yet!
 
-NOTE: Aster is experimental! While at a very small chance, it may damage your
-system on boot attempt. Into the forseeable future, booting in a virtual machine
-is always the reccommended approach.
+    NOTE: Aster is experimental! While at a very small chance, it may damage
+your system on boot attempt. Into the forseeable future, booting in a virtual
+machine is always the reccommended approach.
 
 |------------------------------------------------------------------------------|
