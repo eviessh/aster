@@ -16,6 +16,7 @@
     5.4 DECLARATION
     5.5 DEFINITION
 6 EXPRESSIONS
+    6.1 CALLS
 7 KEYWORDS
 8 OPERATORS
     8.1 LOGICAL
@@ -212,6 +213,16 @@ will plainly either produce a value or produce some kind of output, be it in
 terms of program state or outside state somehow. Each expression in the DSL must
 be delimited by a '.' character non-optionally.
 
+6.1 CALLS
+
+    A function call is functionally the same as a jump with some added
+parameters being moved into registers and the allocation of a new stack frame. A
+function call is achieved by writing the name of a function identifier and then
+a list afterwords for its parameters, or nothing if no parameters are needed. If
+the function returns a value, this expression may be used to assign to a
+variable. If a function has optional parameters, use their names followed by an
+unconditional assignment operator to assign to them.
+
 |-7 KEYWORDS---------------------------------------------------------JULY 2026-|
 
     Each keyword specified in this section is considered reserved, and code
@@ -264,6 +275,10 @@ format specification is as follows;
   type defines should be considered mutable. If before a pointer specifier, the
   pointer itself is mutable. If after, the object addressed is.
   Format: <"mutable" type{"#"}> {"mutable"}
+- "jump": Jump to a label somewhere else in the program. Note that this does not
+  generate any sort of stack frame or parameters. You may not do a raw jump into
+  a function.
+  Format: <"jump" label>
 
 |-8 OPERATORS--------------------------------------------------------JULY 2026-|
 
