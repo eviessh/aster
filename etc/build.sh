@@ -29,13 +29,17 @@ bootloader=
 run=off
 use_gdb=off
 
-while getopts "hbuQGB" opt; do
+ignore_x86_check=no
+
+while getopts "hibuQGB" opt; do
     case "$opt" in
         h)
             printf \
 "Usage: %s [OPTIONS]\n\
 Options:\n\
     -h: Display the help menu and exit.\n\
+\n\
+    -i: Ignore checks for the host being x86_64.\n\
 \n\
     -Q: Run the produced image in QEMU.\n\
     -G: Wait for a GDB connection.\n\
@@ -119,12 +123,34 @@ echo "mkdir -p bld"
 # provide an interface to compile the kernel with.
 #-------------------------------------------------------------------------------
 
-#mkdir -p 'bld/boot' || exit 1
-#echo 'mkdir -p bld/boot'
-#nasm -f 'elf64' 'src/boot/compiler.nasm' -o 'bld/boot/compiler.o' || exit 1
-#echo 'nasm -f elf64 src/boot/compiler.nasm -o bld/boot/compiler.o'
-#ld 'bld/boot/compiler.o' -o 'bld/boot/compiler' || exit 1
-#echo 'ld bld/boot/compiler.o -o bld/boot/compiler'
+mkdir -p 'bld/boot' || exit 1
+echo 'mkdir -p bld/boot'
+
+if [ "$ignore_x86_check" = 'no' ] && ! [ "$(uname -m)" = "x86_64" ]; then
+    echo 'It seems you are not running on x86_64.'
+    echo 'If this is a mistake, pass -i to this script.'
+    exit 1
+fi
+
+case "$(uname -s)" in
+    Linux)
+        nasm -f 'elf64' 'src/boot/compiler/linux.nasm' -o 'bld/boot/compiler.o' || exit 1
+        echo 'nasm -f elf64 src/boot/compiler/linux.nasm -o bld/boot/compiler.o'
+        ld 'bld/boot/compiler.o' -o 'bld/boot/compiler' || exit 1
+        echo 'ld bld/boot/compiler.o -o bld/boot/compiler'
+        ;;
+    Darwin)
+        nasm -f 'macho64' 'src/boot/compiler/macos.nasm' -o 'bld/boot/compiler.o' || exit 1
+        echo 'nasm -f macho64 src/boot/compiler/macos.nasm -o bld/boot/compiler.o'
+        ld -macosx_version_min 10.6 'bld/boot/compiler.o' -o 'bld/boot/compiler' || exit 1
+        echo 'ld bld/boot/compiler.o -o bld/boot/compiler'
+        ;;
+    *)
+        echo 'Unknown operating system environment.'
+        echo 'Please run either Linux or MacOS.'
+        exit 1
+        ;;
+esac
 
 rm 'bld/aster.img'
 for file in $nasm_sources; do
