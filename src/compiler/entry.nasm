@@ -5,8 +5,8 @@ global _start
 
 section .text
 
-%include "src/boot/compiler/process.nasm"
-%include "src/boot/compiler/files.nasm"
+%include "src/compiler/process.nasm"
+%include "src/compiler/files.nasm"
 
 _start:
     lea rdi, [compiler_kernelEntry]

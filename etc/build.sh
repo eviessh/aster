@@ -134,16 +134,16 @@ fi
 
 case "$(uname -s)" in
     Linux)
-        nasm -f 'elf64' -DLINUX 'src/boot/compiler.nasm' -o 'bld/boot/compiler.o' || exit 1
-        echo 'nasm -f elf64 src/boot/compiler.nasm -o bld/boot/compiler.o'
-        ld 'bld/boot/compiler.o' -o 'bld/boot/compiler' || exit 1
-        echo 'ld bld/boot/compiler.o -o bld/boot/compiler'
+        nasm -f 'elf64' -DLINUX 'src/compiler/entry.nasm' -o 'bld/compiler.o' || exit 1
+        echo 'nasm -f elf64 -DLINUX src/compiler/entry.nasm -o bld/compiler.o'
+        ld 'bld/compiler.o' -o 'bld/compiler' || exit 1
+        echo 'ld bld/compiler.o -o bld/compiler'
         ;;
     Darwin)
-        nasm -f 'macho64' -DMACOS 'src/boot/compiler.nasm' -o 'bld/boot/compiler.o' || exit 1
-        echo 'nasm -f macho64 src/boot/compiler.nasm -o bld/boot/compiler.o'
-        ld -macosx_version_min 10.6 -e '_start' 'bld/boot/compiler.o' -o 'bld/boot/compiler' || exit 1
-        echo 'ld bld/boot/compiler.o -o bld/boot/compiler'
+        nasm -f 'macho64' -DMACOS 'src/compiler/entry.nasm' -o 'bld/compiler.o' || exit 1
+        echo 'nasm -f macho64 -DMACOS src/compiler/entry.nasm -o bld/compiler.o'
+        ld -macosx_version_min 10.6 -e '_start' 'bld/compiler.o' -o 'bld/compiler' || exit 1
+        echo 'ld -macosx_version_min 10.6 -e _start bld/compiler.o -o bld/compiler'
         ;;
     *)
         echo 'Unknown operating system environment.'
