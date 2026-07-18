@@ -16,9 +16,9 @@ build script.
 system, and you should ensure you have the required tools before you run the
 script, lest you waste time.
 
-- x86_64 platform: A Linux- or BSD-compatible kernel and an x86_64 processor is
-  required for the bootstrap DSL compiler. If your operating system conforms to
-  these standard and yet is not supported by the build script, add it!
+- x86_64 platform: A Linux- or Darwin-compatible kernel and an x86_64 processor
+  is required for the bootstrap DSL compiler. If your operating system conforms
+  to these standard and yet is not supported by the build script, add it!
 - POSIX sh: A POSIX-compatible shell is required to run the build script itself.
   More featureful shells like Bash or Dash SHOULD work, but are not guaranteed
   and will not be compromised for if it derails the script somehow.

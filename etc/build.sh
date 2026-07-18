@@ -134,15 +134,15 @@ fi
 
 case "$(uname -s)" in
     Linux)
-        nasm -f 'elf64' 'src/boot/compiler/linux.nasm' -o 'bld/boot/compiler.o' || exit 1
-        echo 'nasm -f elf64 src/boot/compiler/linux.nasm -o bld/boot/compiler.o'
+        nasm -f 'elf64' -DLINUX 'src/boot/compiler.nasm' -o 'bld/boot/compiler.o' || exit 1
+        echo 'nasm -f elf64 src/boot/compiler.nasm -o bld/boot/compiler.o'
         ld 'bld/boot/compiler.o' -o 'bld/boot/compiler' || exit 1
         echo 'ld bld/boot/compiler.o -o bld/boot/compiler'
         ;;
     Darwin)
-        nasm -f 'macho64' 'src/boot/compiler/macos.nasm' -o 'bld/boot/compiler.o' || exit 1
-        echo 'nasm -f macho64 src/boot/compiler/macos.nasm -o bld/boot/compiler.o'
-        ld -macosx_version_min 10.6 'bld/boot/compiler.o' -o 'bld/boot/compiler' || exit 1
+        nasm -f 'macho64' -DMACOS 'src/boot/compiler.nasm' -o 'bld/boot/compiler.o' || exit 1
+        echo 'nasm -f macho64 src/boot/compiler.nasm -o bld/boot/compiler.o'
+        ld -macosx_version_min 10.6 -e '_start' 'bld/boot/compiler.o' -o 'bld/boot/compiler' || exit 1
         echo 'ld bld/boot/compiler.o -o bld/boot/compiler'
         ;;
     *)

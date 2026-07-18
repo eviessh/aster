@@ -1,0 +1,2 @@
+%define STDOUT_FILE 0x01
+%define STDERR_FILE 0x02
