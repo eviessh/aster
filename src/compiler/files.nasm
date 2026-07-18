@@ -72,3 +72,26 @@ compiler_writeFile:
     ret
     .fail: jmp compiler_exit
 
+compiler_measureFile:
+    mov rax, LSEEK_SYSCALL
+    mov rdx, 0x02
+    syscall
+    %ifdef LINUX
+        cmp rax, 0
+        jl .fail
+    %elifdef MACOS
+        ; BSD variants use the carry flag to represent the failure of a system
+        ; call.
+        jc .fail
+    %endif
+    ret
+    .fail:
+        push rax
+        mov rdi, STDERR_FILE
+        ; Get the length of the string.
+        mov rdx, [compiler_perror.lseek]
+        lea rsi, [compiler_perror.lseek + 8]
+        call compiler_writeFile
+        pop rax
+        jmp compiler_exit
+
