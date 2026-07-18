@@ -9,7 +9,7 @@ section .text
 %include "src/boot/compiler/files.nasm"
 
 _start:
-    mov rdi, [compiler_kernelEntry]
+    lea rdi, [compiler_kernelEntry]
     xor rsi, rsi
     call compiler_openFile
 
@@ -18,9 +18,9 @@ _start:
 
 section .data
 
-compiler_kernelEntry: db "src/kernel/entr", 0
+compiler_kernelEntry: db "src/kernel/entry", 0
 
 compiler_perror:
     .open:
-        dq 0x14
-        db "Failed to open file."
+        dq 0x15
+        db "Failed to open file.", 10

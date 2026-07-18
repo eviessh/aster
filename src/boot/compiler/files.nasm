@@ -19,7 +19,7 @@ default rel
 ;   RSI: The open flags.
 ;       0: Read only.
 ;       1: Write only.
-;   RAX is clobbered.
+;   RCX, R11, RAX, and maybe RDX are clobbered.
 ;
 ; This function returns the open file descriptor in RAX. If it fails, the
 ; function will not return and just exit with an error code.
@@ -27,14 +27,21 @@ default rel
 compiler_openFile:
     mov rax, OPEN_SYSCALL
     syscall
-    cmp rax, 0
-    js .fail
+    %ifdef LINUX
+        cmp rax, 0
+        jl .fail
+    %elifdef MACOS
+        ; BSD variants use the carry flag to represent the failure of a system
+        ; call.
+        jc .fail
+    %endif
     ret
     .fail:
         push rax
         mov rdi, STDERR_FILE
-        mov rsi, [compiler_perror.open + 8]
-        mov rdx, qword [compiler_perror.open]
+        ; Get the length of the string.
+        mov rdx, [compiler_perror.open]
+        lea rsi, [compiler_perror.open + 8]
         call compiler_writeFile
         pop rax
         jmp compiler_exit
@@ -46,7 +53,7 @@ compiler_openFile:
 ;   RDI: The file descriptor to write to.
 ;   RSI: The buffer to write.
 ;   RDX: The amount of data to write.
-;   RAX is clobbered.
+;   RCX, R11, and RAX are clobbered.
 ;
 ; This function returns nothing, and if it fails, it will just exit with an
 ; error code.
@@ -54,8 +61,14 @@ compiler_openFile:
 compiler_writeFile:
     mov rax, WRITE_SYSCALL
     syscall
-    test rax, rax
-    jnz .fail
+    %ifdef LINUX
+        test rax, rax
+        jnz .fail
+    %elifdef MACOS
+        ; BSD variants use the carry flag to represent the failure of a system
+        ; call.
+        jc .fail
+    %endif
     ret
     .fail: jmp compiler_exit
 
