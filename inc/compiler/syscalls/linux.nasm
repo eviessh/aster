@@ -1,4 +1,5 @@
 %define OPEN_SYSCALL  0x02
+%define READ_SYSCALL  0x00
 %define WRITE_SYSCALL 0x01
 %define LSEEK_SYSCALL 0x08
 %define EXIT_SYSCALL  0x3C
